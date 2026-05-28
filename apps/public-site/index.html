@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boost by FC Rosengård</title>
+    <meta data-static-seo name="description" content="Sedan 2003 har vi hjälpt tusentals unga i Malmö att hitta sin plats på arbetsmarknaden." />
+    <meta name="theme-color" content="#002A5C" />
+
+    <!--
+      Static social-share fallback. This is a client-rendered SPA, so the
+      per-page <Helmet> tags from use-seo.tsx only exist after JavaScript runs.
+      Facebook, LinkedIn, Slack, WhatsApp and X do NOT execute JavaScript when
+      they unfurl a link - they read this raw HTML and nothing else. Without
+      these tags a shared link renders as a bare URL with no card at all.
+
+      Deliberately generic (no og:url, no canonical): the SPA fallback serves
+      this same HTML for every route, so a hardcoded URL here would tell
+      non-JS crawlers that every page canonicalises to the homepage. Helmet
+      supplies the correct per-page title/description/canonical for crawlers
+      that do render JS (Google, Bing).
+
+      data-static-seo is load-bearing. Helmet APPENDS its tags rather than
+      replacing these, which would leave two of every tag - the generic one
+      first - and Google picks whichever it likes. So use-seo.tsx strips every
+      [data-static-seo] element once React is running: JS crawlers then see
+      only the per-page tags, while non-JS crawlers still get these, because
+      they never execute the code that removes them.
+
+      Any tag added here that use-seo.tsx also emits needs this attribute.
+      Tags it does NOT emit (og:image:width/height/alt, theme-color) must not
+      have it, or they would be stripped and never replaced.
+    -->
+    <meta data-static-seo property="og:site_name" content="Boost by FC Rosengård" />
+    <meta data-static-seo property="og:type" content="website" />
+    <meta data-static-seo property="og:locale" content="sv_SE" />
+    <meta data-static-seo property="og:title" content="Boost by FC Rosengård" />
+    <meta data-static-seo property="og:description" content="Sedan 2003 har vi hjälpt tusentals unga i Malmö att hitta sin plats på arbetsmarknaden." />
+    <meta data-static-seo property="og:image" content="https://boostbyfcr.se/images/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Boost by FC Rosengård - vi öppnar dörrar till arbete, studier och hälsa" />
+    <meta data-static-seo name="twitter:card" content="summary_large_image" />
+    <meta data-static-seo name="twitter:title" content="Boost by FC Rosengård" />
+    <meta data-static-seo name="twitter:description" content="Sedan 2003 har vi hjälpt tusentals unga i Malmö att hitta sin plats på arbetsmarknaden." />
+    <meta data-static-seo name="twitter:image" content="https://boostbyfcr.se/images/og-image.png" />
+
+    <!-- Self-hosted Montserrat: preload the two most critical weights (700 for display headings, 400 for body). -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-Bold.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-Regular.woff2" />
+    <!-- Hero LCP image (optimized: 840×1260, ~42 KB). High priority so it starts before hydration. -->
+    <link rel="preload" as="image" href="/images/deltagare_boostbyfcr_pa_trappa.jpg" fetchpriority="high" />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-to-content">Hoppa till huvudinnehåll</a>
+    <div id="root"><div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F8F7F4"><div style="text-align:center"><div style="width:48px;height:48px;border:3px solid #E5E7EB;border-top-color:#D32F2F;border-radius:50%;animation:_bo 0.8s linear infinite;margin:0 auto 16px"></div><p style="font-family:Montserrat,sans-serif;font-size:14px;color:#6B7280">Laddar...</p></div></div><style>@keyframes _bo{to{transform:rotate(360deg)}}</style></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

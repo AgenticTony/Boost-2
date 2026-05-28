@@ -1,0 +1,6 @@
+# CODEOWNERS — review from the folder's owner is required before merge.
+# Mirrors the ownership table in docs/TEAM_GIT_WORKFLOW.md.
+#
+# apps/public-site/ is the public website (P2), owned by Anthony.
+# Any change to the public site frontend requires Anthony's approval.
+apps/public-site/ @AgenticTony

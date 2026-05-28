@@ -1,0 +1,80 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+wwwroot/
+
+# Umbraco
+apps/cms/umbraco/
+apps/cms/umbraco_logs/
+apps/cms/umbraco/Data/
+apps/cms/App_Data/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+bin/
+obj/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# IDE
+.vscode/
+.vs/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+.playwright-mcp/
+
+# Vite
+apps/public-site/dist/
+apps/locked-area/dist/
+
+# Client docs (private)
+Anna_client_docs/
+
+# Never commit binary docs or debug screenshots to public assets
+*.docx
+screencapture-*
+
+# Vite cache
+.vite/
+
+# Test results
+test-results/
+
+# Secrets — never commit
+apps/public-site/src/assets/recovery-codes.txt
+*.dev.vars
+
+# Anthony's local-only working docs (not shared with the team)
+docs/Boost_Arbetsuppdelning_v3_Anna_uppdatering.md
+docs/BOOST_BRAND_COLORS.md
+docs/DesignBrief.md
+docs/P2_PREREQUISITES.md
+docs/P2_PUSH_PLAN.md
+docs/P2_ROADMAP.md
+docs/Phase2Brief.md
+docs/plan2.md
+.wrangler/
+.dev.vars

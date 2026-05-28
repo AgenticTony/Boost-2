@@ -1,0 +1,17 @@
+{
+  "name": "boost-by-fcr-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:public && npm run build:locked",
+    "build:public": "cd apps/public-site && npm run build",
+    "build:locked": "cd apps/locked-area && npm run build",
+    "dev": "npm run dev:public & npm run dev:locked",
+    "dev:public": "cd apps/public-site && npm run dev",
+    "dev:locked": "cd apps/locked-area && npm run dev"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
