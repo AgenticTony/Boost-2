@@ -37,11 +37,22 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 
 ### Database Setup
 
-Run the SQL in `sql/01_profiles_and_rls.sql` in your Supabase SQL Editor. This creates:
+Run the files in `sql/` **in order** in your Supabase SQL Editor.
+
+`01_profiles_and_rls.sql` creates:
 - `profiles` table (extends `auth.users`)
 - RLS policies (users read own profile, admins read/update all)
 - Auto-trigger to create a profile on signup
 - `is_admin()` security definer function
+
+`02_security_hardening.sql` then:
+- Pins `search_path` on `is_admin()` and restricts who may execute it
+- Adds the `denied` column used by the admin deny flow
+- Recreates the policies idempotently, with an explicit `WITH CHECK`
+- Narrows `UPDATE` to the `approved` and `denied` columns only
+
+Both are safe to re-run — 01 is not idempotent on its policies, so if it
+errors on a second run, skip to 02, which recreates them anyway.
 
 ### First Admin
 
@@ -50,6 +61,11 @@ After registering your first user, promote them in the Supabase SQL Editor:
 ```sql
 UPDATE public.profiles SET approved = true, is_admin = true WHERE email = 'your-email@example.com';
 ```
+
+This is deliberately a SQL Editor operation. After `02`, `is_admin` is not
+writable through the public API by anyone — a compromised admin session
+cannot mint more admins. The SQL Editor runs as the table owner and is
+unaffected by those grants.
 
 ### Development
 

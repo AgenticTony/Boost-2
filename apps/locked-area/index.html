@@ -3,6 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      Keep the whole members area out of search results.
+
+      public/_redirects serves this shell with HTTP 200 for every unmatched
+      path (/* /index.html 200), so an unknown URL is a soft 404: the app
+      renders "not found" while the status line says "this is a real page".
+      Without noindex a crawler will happily index arbitrary junk URLs, and
+      any member-facing text that reaches the shell along with them.
+
+      Paired with public/robots.txt. Neither is access control - that is
+      Supabase auth plus row-level security - but both keep the area out of
+      the index if a link ever leaks.
+    -->
+    <meta name="robots" content="noindex, nofollow" />
+
     <title>Boost by FCR - Locked Area</title>
   </head>
   <body>
