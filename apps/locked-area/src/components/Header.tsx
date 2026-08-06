@@ -3,7 +3,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useState } from "react"; // ← ADD
 
 export default function Header() {
-  const { logout, user } = useAuth();
+  const { logout, user, isAdmin } = useAuth();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false); // ← ADD
 
@@ -86,7 +86,7 @@ export default function Header() {
 
         {/* Right side: Admin + Logout + Avatar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} className="hidden md:flex">
-          {user?.email === 'moh17670s@gmail.com' && (
+          {isAdmin && (
             <Link
               to="/admin/approvals"
               style={{
@@ -178,7 +178,7 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            {user?.email === 'moh17670s@gmail.com' && (
+            {isAdmin && (
               <Link
                 to="/admin/approvals"
                 onClick={() => setMenuOpen(false)}

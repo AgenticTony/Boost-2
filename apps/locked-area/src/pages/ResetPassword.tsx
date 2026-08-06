@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { useSearchParams, useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../auth/AuthContext'
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import { Lock, Eye, EyeOff, Check, X, ArrowLeft } from 'lucide-react'
 
 interface PasswordRequirement {
@@ -9,11 +9,7 @@ interface PasswordRequirement {
 }
 
 export default function ResetPassword() {
-  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { resetPassword } = useAuth()
-  const token = searchParams.get('token')
-
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -32,20 +28,9 @@ export default function ResetPassword() {
   const strengthLabel = ['Svag', 'Svag', 'Medel', 'Stark', 'Mycket stark'][strengthScore]
   const strengthColor = ['bg-red-500', 'bg-red-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'][strengthScore]
 
-  useEffect(() => {
-    if (!token) {
-      setError('Ogiltig länk. Begär en ny återställning.')
-    }
-  }, [token])
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-
-    if (!token) {
-      setError('Ogiltig länk.')
-      return
-    }
 
     if (newPassword !== confirmPassword) {
       setError('Lösenorden matchar inte')
@@ -58,14 +43,14 @@ export default function ResetPassword() {
     }
 
     setIsLoading(true)
-    const result = await resetPassword(token, newPassword)
+    const { error: updateError } = await supabase.auth.updateUser({ password: newPassword })
     setIsLoading(false)
 
-    if (result.success) {
+    if (updateError) {
+      setError(updateError.message || 'Ett fel uppstod.')
+    } else {
       setSuccess(true)
       setTimeout(() => navigate('/login'), 3000)
-    } else {
-      setError(result.error || 'Ett fel uppstod.')
     }
   }
 

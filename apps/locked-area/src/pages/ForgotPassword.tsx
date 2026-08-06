@@ -4,7 +4,7 @@ import { useAuth } from '../auth/AuthContext'
 import { Mail, ArrowLeft, Check, X } from 'lucide-react'
 
 export default function ForgotPassword() {
-  const { requestPasswordReset } = useAuth()
+  const { resetPassword } = useAuth()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -15,7 +15,7 @@ export default function ForgotPassword() {
     setError('')
     setIsLoading(true)
 
-    const result = await requestPasswordReset(email)
+    const result = await resetPassword(email)
     setIsLoading(false)
 
     if (result.success) {
