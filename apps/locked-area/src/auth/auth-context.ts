@@ -14,6 +14,14 @@ export interface AuthContextValue {
   isAuthenticated: boolean;
   isAdmin: boolean;
   isLoading: boolean;
+  /**
+   * Set when a session exists but its profile row could not be read.
+   *
+   * Distinct from `!isAuthenticated`: that means "no session", this means
+   * "session, but we cannot tell who you are". Treating the second as the
+   * first redirects a signed-in member to the login screen with no explanation.
+   */
+  profileError: string | null;
   login: (
     email: string,
     password: string,

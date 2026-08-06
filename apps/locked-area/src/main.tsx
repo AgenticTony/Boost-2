@@ -9,11 +9,16 @@ import "./index.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
-      <AuthProvider>
-        <BrowserRouter>
+      {/*
+        AuthProvider sits inside the router so `logout` can navigate instead of
+        assigning to window.location, which reloaded the entire SPA.
+        src/test/test-utils.tsx mirrors this order and must be kept in step.
+      */}
+      <BrowserRouter>
+        <AuthProvider>
           <App />
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </HelmetProvider>
   </StrictMode>,
 );

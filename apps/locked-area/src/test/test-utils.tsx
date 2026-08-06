@@ -13,19 +13,16 @@ import { AuthProvider } from "@/auth/auth-provider";
  *
  * The nesting order mirrors `main.tsx` exactly and must keep doing so - a test
  * that wraps providers differently from production can pass while the app is
- * broken. `AuthProvider` currently sits *outside* the router, which is why
- * `logout` falls back to `window.location.href`; Phase 3 moves it inside and
- * updates both files together.
+ * broken. `AuthProvider` sits inside the router because `logout` navigates
+ * rather than assigning to `window.location`.
  */
 export function createWrapper(initialEntries: string[] = ["/"]) {
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <HelmetProvider>
-        <AuthProvider>
-          <MemoryRouter initialEntries={initialEntries}>
-            {children}
-          </MemoryRouter>
-        </AuthProvider>
+        <MemoryRouter initialEntries={initialEntries}>
+          <AuthProvider>{children}</AuthProvider>
+        </MemoryRouter>
       </HelmetProvider>
     );
   };
