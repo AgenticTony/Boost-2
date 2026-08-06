@@ -3,7 +3,9 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { ErrorBoundary } from "@/components/error-boundary";
 
-function ThrowOnRender() {
+// Returns `never` so TypeScript accepts it as a JSX component - a function
+// inferred as `() => void` is not a valid element type.
+function ThrowOnRender(): never {
   throw new Error("Test error");
 }
 
