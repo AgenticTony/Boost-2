@@ -1,22 +1,22 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { ScrollToTop } from "@/components/ScrollToTop";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import NotFound from "@/pages/NotFound";
+import { Header } from "@/components/layout/header";
+import { ScrollToTop } from "@/components/scroll-to-top";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { ProtectedRoute } from "@/components/protected-route";
+import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 
 // Lazy-load non-critical pages for code splitting
-const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
-const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
-const VerifyEmail = lazy(() => import("@/pages/VerifyEmail"));
-const Library = lazy(() => import("@/pages/Library"));
-const ExerciseDetail = lazy(() => import("@/pages/ExerciseDetail"));
-const Resources = lazy(() => import("@/pages/Resources"));
-const HandbookReader = lazy(() => import("@/pages/HandbookReader"));
-const KnowledgeSection = lazy(() => import("@/pages/KnowledgeSection"));
-const AdminApprovals = lazy(() => import("@/pages/AdminApprovals"));
+const ForgotPassword = lazy(() => import("@/pages/forgot-password"));
+const ResetPassword = lazy(() => import("@/pages/reset-password"));
+const VerifyEmail = lazy(() => import("@/pages/verify-email"));
+const Library = lazy(() => import("@/pages/library"));
+const ExerciseDetail = lazy(() => import("@/pages/exercise-detail"));
+const Resources = lazy(() => import("@/pages/resources"));
+const HandbookReader = lazy(() => import("@/pages/handbook-reader"));
+const KnowledgeSection = lazy(() => import("@/pages/knowledge-section"));
+const AdminApprovals = lazy(() => import("@/pages/admin-approvals"));
 
 function PageLoader() {
   return (

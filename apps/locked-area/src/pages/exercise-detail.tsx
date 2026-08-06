@@ -1,6 +1,6 @@
-import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
-import { InfoBanner } from '../components/InfoBanner'
+import { useParams, useNavigate } from "react-router-dom"
+import { ArrowLeft } from "lucide-react"
+import { InfoBanner } from "@/components/info-banner"
 
 export default function ExerciseDetail() {
   const { id } = useParams<{ id: string }>()

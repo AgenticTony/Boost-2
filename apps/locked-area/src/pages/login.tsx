@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { useAuth } from '../auth/useAuth'
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Check, X, BookOpen, UserCircle, BarChart3 } from 'lucide-react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState } from "react"
+import { useAuth } from "@/auth/use-auth"
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Check, X, BookOpen, UserCircle, BarChart3 } from "lucide-react"
+import { useNavigate, Link } from "react-router-dom"
 
 type Tab = 'login' | 'register'
 

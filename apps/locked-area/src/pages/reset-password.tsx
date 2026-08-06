@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
-import { Lock, Eye, EyeOff, Check, X, ArrowLeft } from 'lucide-react'
+import { useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
+import { supabase } from "@/lib/supabase"
+import { Lock, Eye, EyeOff, Check, X, ArrowLeft } from "lucide-react"
 
 interface PasswordRequirement {
   label: string

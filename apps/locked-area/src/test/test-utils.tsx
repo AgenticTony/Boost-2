@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import { AuthProvider } from "@/auth/AuthContext";
+import { AuthProvider } from "@/auth/auth-provider";
 
 /**
  * Wraps children with the providers needed for component/page tests.

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Lightbulb,
   BookOpen,
@@ -10,12 +10,12 @@ import {
   Search,
   Filter,
   type LucideIcon,
-} from 'lucide-react';
-import { PageLayout } from '../components/PageLayout';
-import { SectionDivider } from '../components/SectionDivider';
-import { InfoBanner } from '../components/InfoBanner';
-import { GuideSection } from '../components/GuideSection';
-import { FutureFeatures } from '../components/FutureFeatures';
+} from "lucide-react";
+import { PageLayout } from "@/components/layout/page-layout";
+import { SectionDivider } from "@/components/section-divider";
+import { InfoBanner } from "@/components/info-banner";
+import { GuideSection } from "@/components/guide-section";
+import { FutureFeatures } from "@/components/future-features";
 
 // ── Types ─────────────────────────────────────────────────
 interface Article {

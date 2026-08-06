@@ -1,31 +1,7 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { supabase } from "@/lib/supabase";
 import { translateAuthError } from "@/lib/auth-errors";
-
-// ── Types ───────────────────────────────────────────────
-
-interface Profile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  approved: boolean;
-  is_admin: boolean;
-}
-
-interface AuthContextValue {
-  user: Profile | null;
-  isAuthenticated: boolean;
-  isAdmin: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
-  logout: () => Promise<void>;
-}
-
-// ── Context ───────────────────────────────────────────────
-
-const AuthContext = createContext<AuthContextValue | null>(null);
+import { AuthContext, type Profile } from "@/auth/auth-context";
 
 // ── Provider ────────────────────────────────────────────
 
@@ -118,12 +94,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (!data.user) {
-        return { success: false, error: "Kunde inte skapa konto. Försök igen." };
+        return {
+          success: false,
+          error: "Kunde inte skapa konto. Försök igen.",
+        };
       }
 
       return { success: true };
     } catch {
-      return { success: false, error: "Ett fel uppstod. Försök igen om en stund." };
+      return {
+        success: false,
+        error: "Ett fel uppstod. Försök igen om en stund.",
+      };
     }
   };
 
@@ -169,15 +151,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-// ── Hook ────────────────────────────────────────────────
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-  return context;
 }

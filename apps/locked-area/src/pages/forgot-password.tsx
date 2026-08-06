@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../auth/useAuth'
-import { Mail, ArrowLeft, Check, X } from 'lucide-react'
+import { useState } from "react"
+import { Link } from "react-router-dom"
+import { useAuth } from "@/auth/use-auth"
+import { Mail, ArrowLeft, Check, X } from "lucide-react"
 
 export default function ForgotPassword() {
   const { resetPassword } = useAuth()

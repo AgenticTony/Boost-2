@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   BookOpen,
   ChevronLeft,
@@ -14,10 +14,10 @@ import {
   Download,
   BarChart3,
   Share2,
-} from 'lucide-react';
-import { InfoBanner } from '../components/InfoBanner';
-import { GuideSection } from '../components/GuideSection';
-import { FutureFeatures } from '../components/FutureFeatures';
+} from "lucide-react";
+import { InfoBanner } from "@/components/info-banner";
+import { GuideSection } from "@/components/guide-section";
+import { FutureFeatures } from "@/components/future-features";
 
 interface TocItemProps {
   number: number;

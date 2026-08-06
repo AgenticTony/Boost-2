@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Clock,
@@ -15,10 +15,10 @@ import {
   ChevronRight,
   Users,
   Star
-} from 'lucide-react';
-import { useExercises, type Exercise } from '../hooks/useExercises';
-import { GuideSection } from '../components/GuideSection';
-import { FutureFeatures } from '../components/FutureFeatures';
+} from "lucide-react";
+import { useExercises, type Exercise } from "@/hooks/use-exercises";
+import { GuideSection } from "@/components/guide-section";
+import { FutureFeatures } from "@/components/future-features";
 
 export default function Library() {
   const { data: exercises, isLoading, error } = useExercises();

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../auth/useAuth";
+import { useAuth } from "@/auth/use-auth";
 
 export function Header() {
   const { logout, user, isAdmin } = useAuth();

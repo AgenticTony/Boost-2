@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../auth/useAuth";
-import { supabase } from "../lib/supabase";
+import { useAuth } from "@/auth/use-auth";
+import { supabase } from "@/lib/supabase";
 
 interface PendingUser {
   id: string;
