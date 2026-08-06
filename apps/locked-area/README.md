@@ -1,2 +1,107 @@
-# boost-by-fcr-locked-area
-Locked area app for Boost by FCR
+# Locked Area — Boost by FC Rosengård
+
+Members-only portal for Boost by FC Rosengård. Contains the exercise library, resources, handbook, and knowledge base. Access requires an admin-approved account.
+
+## Tech Stack
+
+- **React 19** + **TypeScript 6** (strict mode)
+- **Vite 8** (build + dev server)
+- **Tailwind CSS v4** (CSS-first `@theme`, no JS config)
+- **Supabase** (authentication + database)
+- **Framer Motion** (animations)
+- **react-router-dom v7** (routing with lazy-loaded pages)
+- **Vitest** + **@testing-library/react** (testing)
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- A Supabase project with the profiles table set up (see `sql/` directory)
+
+### Installation
+
+```bash
+cd apps/locked-area
+npm install
+```
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and fill in:
+
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Database Setup
+
+Run the SQL in `sql/01_profiles_and_rls.sql` in your Supabase SQL Editor. This creates:
+- `profiles` table (extends `auth.users`)
+- RLS policies (users read own profile, admins read/update all)
+- Auto-trigger to create a profile on signup
+- `is_admin()` security definer function
+
+### First Admin
+
+After registering your first user, promote them in the Supabase SQL Editor:
+
+```sql
+UPDATE public.profiles SET approved = true, is_admin = true WHERE email = 'your-email@example.com';
+```
+
+### Development
+
+```bash
+npm run dev      # Start dev server on port 5174
+```
+
+### Build
+
+```bash
+npm run build    # Type-check + production build
+```
+
+### Test
+
+```bash
+npm run test           # Run all tests
+npm run test:watch     # Watch mode
+npm run test:coverage  # With coverage report
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+## Architecture
+
+```
+src/
+  auth/           AuthContext + useAuth hook (Supabase-backed)
+  components/     Reusable UI components
+  hooks/          Data hooks (useExercises)
+  lib/            Supabase client, cn() utility, auth error translations
+  pages/          Route components (lazy-loaded)
+  test/           Test setup + helpers
+```
+
+### Authentication Flow
+
+1. User registers -> Supabase creates account + profile (via trigger)
+2. User verifies email (Supabase sends confirmation link)
+3. Admin approves user (`approved: true` in profiles table)
+4. User can now log in and access content
+
+### Design System
+
+Shares the **same Tailwind v4 design tokens** as the public-site app:
+- Colors: `brand-navy`, `brand-red`, `brand-gold`, `surface`, `text`, `text-muted`
+- Fonts: Montserrat (self-hosted woff2)
+- Radii: `rounded-card`, `rounded-input`, `rounded-pill`, `rounded-cta`
+- Container: `container-page` (max-width 1280px)
+
+Both apps use identical `@theme` blocks so they look like one website.
