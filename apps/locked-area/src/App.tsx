@@ -1,6 +1,6 @@
-﻿import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AuthProvider } from './auth/AuthContext'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import Header from './components/Header'
 import Login from './pages/login'
 import ForgotPassword from './pages/ForgotPassword'
@@ -12,11 +12,12 @@ import { Resources } from './pages/Resources'
 import { HandbookReader } from './pages/HandbookReader'
 import { KnowledgeSection } from './pages/KnowledgeSection'
 import AdminApprovals from './pages/AdminApprovals'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <ErrorBoundary>
         <Header />
         <main>
           <Routes>
@@ -30,10 +31,11 @@ export default function App() {
             <Route path="/exercises" element={<ProtectedRoute><ExerciseDetail /></ProtectedRoute>} />
             <Route path="/handbook" element={<ProtectedRoute><HandbookReader /></ProtectedRoute>} />
             <Route path="/knowledge" element={<ProtectedRoute><KnowledgeSection /></ProtectedRoute>} />
-            <Route path="/admin/approvals" element={<AdminApprovals />} />
+            <Route path="/admin/approvals" element={<ProtectedRoute><AdminApprovals /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-      </BrowserRouter>
-    </AuthProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
   )
 }

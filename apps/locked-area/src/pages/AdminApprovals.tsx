@@ -57,24 +57,19 @@ export default function AdminApprovals() {
     await fetchPending();
   };
 
-  const denyUser = async (id: string) => {
+  const denyUser = async (_id: string) => {
     const confirmed = window.confirm(
-      "Är du säker på att du vill neka denna användare? Detta raderar kontot.",
+      "Att neka en användare kräver borttagning från Supabase Auth (Authentication > Users i dashboarden). Vill du fortsätta?",
     );
     if (!confirmed) return;
 
-    // Delete from profiles (trigger cascades to auth.users)
-    const { error } = await supabase.from("profiles").delete().eq("id", id);
-
-    if (error) {
-      // RLS might block the delete — try via auth admin API instead
-      alert(
-        "Kunde inte ta bort användaren från profilen. Du kan behöva ta bort dem via Supabase dashboard > Authentication > Users.",
-      );
-      return;
-    }
-
-    await fetchPending();
+    // Client-side RLS blocks DELETE on auth.users.
+    // The profile can be updated to mark as denied, but full removal
+    // requires the Supabase dashboard or a server-side function.
+    // For now, show guidance to the admin.
+    alert(
+      "Gå till Supabase Dashboard → Authentication → Users för att ta bort användaren helt. Profilen försvinner automatiskt (cascade).",
+    );
   };
 
   useEffect(() => {
