@@ -1,4 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { AlertTriangle, RotateCcw } from "lucide-react";
 
 interface Props {
   children: ReactNode;
@@ -6,48 +8,69 @@ interface Props {
 
 interface State {
   hasError: boolean;
-  error?: Error;
+  /** Incremented on retry to force React to remount the entire subtree. */
+  retryKey: number;
 }
 
+/**
+ * Catches render errors in lazy-loaded pages and shows a branded fallback.
+ * React requires class components for error boundaries.
+ */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, retryKey: 0 };
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+  static getDerivedStateFromError(): State {
+    return { hasError: true, retryKey: 0 };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ErrorBoundary caught:", error, errorInfo);
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("ErrorBoundary caught:", error, info);
   }
+
+  private handleRetry = () => {
+    this.setState((prev) => ({
+      hasError: false,
+      retryKey: prev.retryKey + 1,
+    }));
+  };
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex items-center justify-center min-h-screen bg-surface p-6">
-          <div className="max-w-md text-center">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-6">
-              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
+        <section className="flex min-h-[60vh] items-center justify-center px-6 bg-surface text-text">
+          <div className="text-center max-w-md">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-brand-red-light text-brand-red mb-6">
+              <AlertTriangle className="h-8 w-8" />
             </div>
-            <h1 className="text-2xl font-bold text-text mb-3">Något gick fel</h1>
-            <p className="text-text-muted leading-relaxed mb-6">
-              Ett oväntat fel inträffade. Försök igen genom att ladda om sidan.
+            <h1 className="text-3xl font-display font-extrabold text-text mb-3">
+              Något gick fel
+            </h1>
+            <p className="text-text-muted leading-relaxed mb-8">
+              Ett oväntat fel uppstod. Försök igen.
             </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-brand-red text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-red/90 transition-colors"
-            >
-              Ladda om
-            </button>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <button
+                className="inline-flex items-center justify-center px-6 py-3 rounded-cta font-display font-semibold bg-white text-text hover:bg-surface-dark/5 transition-colors border border-border"
+                onClick={this.handleRetry}
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Försök igen
+              </button>
+              <Link
+                to="/"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-cta font-display font-semibold bg-brand-red text-white hover:bg-brand-red/90 transition-colors"
+              >
+                Till startsidan
+              </Link>
+            </div>
           </div>
-        </div>
+        </section>
       );
     }
 
-    return this.props.children;
+    return <div key={this.state.retryKey}>{this.props.children}</div>;
   }
 }

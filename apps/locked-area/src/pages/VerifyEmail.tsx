@@ -3,18 +3,18 @@ import { Check } from 'lucide-react'
 
 export default function VerifyEmail() {
   return (
-    <div className="min-h-screen bg-[#1e3a5f] flex items-center justify-center p-6">
-      <div className="bg-[#243b55] rounded-2xl border border-white/10 p-8 text-center max-w-md">
-        <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-4">
-          <Check className="w-6 h-6 text-green-400" />
+    <div className="min-h-screen bg-surface flex items-center justify-center p-6 font-body">
+      <div className="bg-white rounded-card border border-border p-8 text-center max-w-md shadow-md">
+        <div className="w-12 h-12 rounded-input bg-success/10 flex items-center justify-center mx-auto mb-4">
+          <Check className="w-6 h-6 text-success" />
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">E-post verifierad!</h2>
-        <p className="text-slate-400 text-sm mb-6">
+        <h2 className="text-xl font-display font-bold text-text mb-2">E-post verifierad!</h2>
+        <p className="text-text-muted text-sm mb-6">
           Din e-post är verifierad! Du kan nu logga in.
         </p>
         <Link
           to="/login"
-          className="inline-flex items-center gap-2 bg-[#e0bd4a] hover:bg-[#d4ad3f] text-slate-900 font-semibold px-6 py-2.5 rounded-lg transition-all"
+          className="inline-flex items-center gap-2 bg-brand-red hover:bg-brand-red/90 text-white font-semibold px-6 py-2.5 rounded-cta transition-all"
         >
           Till inloggning
         </Link>

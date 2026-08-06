@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../auth/useAuth";
 import { supabase } from "../lib/supabase";
 
 interface PendingUser {
@@ -78,67 +78,84 @@ export default function AdminApprovals() {
 
   if (!isAdmin) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <p className="text-text-muted">
-          Du har inte behörighet att se denna sida.
-        </p>
+      <div className="min-h-screen bg-surface">
+        <div className="container-page py-12">
+          <p className="text-text-muted">
+            Du har inte behörighet att se denna sida.
+          </p>
+        </div>
       </div>
     );
   }
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div
+          className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red"
+          role="status"
+          aria-label="Laddar"
+        />
       </div>
     );
+
   if (error)
-    return <div className="p-6 text-red-500 max-w-4xl mx-auto">{error}</div>;
+    return (
+      <div className="min-h-screen bg-surface">
+        <div className="container-page py-12">
+          <p className="text-error">{error}</p>
+        </div>
+      </div>
+    );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Godkänn nya användare</h1>
-      {pendingUsers.length === 0 ? (
-        <div className="bg-surface rounded-2xl p-8 text-center border border-border/60">
-          <p className="text-text-muted leading-relaxed">
-            Inga användare väntar på godkännande.
-          </p>
-        </div>
-      ) : (
-        <ul className="space-y-4">
-          {pendingUsers.map((user) => (
-            <li
-              key={user.id}
-              className="bg-white border border-border/60 rounded-2xl p-5 flex justify-between items-center"
-            >
-              <div>
-                <p className="font-semibold text-text">
-                  {user.full_name || "Okänd"}
-                </p>
-                {user.email && (
-                  <p className="text-sm text-text-muted mt-0.5">
-                    {user.email}
+    <div className="min-h-screen bg-surface font-body">
+      <div className="container-page py-12">
+        <h1 className="text-3xl font-display font-bold text-text mb-6">
+          Godkänn nya användare
+        </h1>
+        {pendingUsers.length === 0 ? (
+          <div className="bg-white rounded-card border border-border p-8 text-center shadow-sm">
+            <p className="text-text-muted leading-relaxed">
+              Inga användare väntar på godkännande.
+            </p>
+          </div>
+        ) : (
+          <ul className="space-y-4">
+            {pendingUsers.map((user) => (
+              <li
+                key={user.id}
+                className="bg-white border border-border rounded-card p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 shadow-sm"
+              >
+                <div>
+                  <p className="font-semibold text-text">
+                    {user.full_name || "Okänd"}
                   </p>
-                )}
-              </div>
-              <div className="space-x-2">
-                <button
-                  onClick={() => approveUser(user.id)}
-                  className="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-brand-green/90 transition-colors font-medium text-sm"
-                >
-                  Godkänn
-                </button>
-                <button
-                  onClick={() => denyUser(user.id)}
-                  className="border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors font-medium text-sm"
-                >
-                  Neka
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+                  {user.email && (
+                    <p className="text-sm text-text-muted mt-0.5">
+                      {user.email}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => approveUser(user.id)}
+                    className="bg-success text-white px-4 py-2 rounded-input hover:bg-success/90 transition-colors font-medium text-sm"
+                  >
+                    Godkänn
+                  </button>
+                  <button
+                    onClick={() => denyUser(user.id)}
+                    className="border border-brand-red text-brand-red px-4 py-2 rounded-input hover:bg-brand-red/5 transition-colors font-medium text-sm"
+                  >
+                    Neka
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

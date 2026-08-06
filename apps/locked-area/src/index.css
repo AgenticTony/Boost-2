@@ -1,8 +1,103 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Self-hosted Montserrat (latin subset — covers Swedish å/ä/ö). No external request. */
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/Montserrat-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/Montserrat-Medium.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/Montserrat-SemiBold.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/Montserrat-Bold.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 800; font-display: swap; src: url("/fonts/Montserrat-ExtraBold.woff2") format("woff2"); }
+
+@theme {
+  /* Logo palette from Anna: #072D59 (navy), #C0C7DA (light blue), #E04832 (warm red) */
+  --color-brand-navy: #072D59;
+  /* Two reds, split by contrast contract - do not swap them:
+     - brand-red is the SOLID-FILL red. White text on it = 5.28:1 (AA).
+       Use for buttons, badges, step circles - anything with white text on top.
+     - brand-red-bright is the RED-ON-NAVY text colour. On #072D59 = 6.33:1,
+       and on the white/10 overlay (#20426A) = 4.72:1, so it clears AA even at
+       12px (eyebrows, footer icons, stat numbers). It is far too light to sit
+       behind white text - never use it as a background fill. */
+  --color-brand-red: #C93320;
+  --color-brand-red-bright: #FF9280;
+  --color-brand-red-light: #FEF0ED;
+  --color-brand-gold: #E8B339;
+  --color-brand-blue-light: #C0C7DA;
+  --color-surface: #FAF8F5;
+  --color-surface-dark: #072D59;
+  --color-text: #333333;
+  --color-text-muted: #555B66;
+  --color-success: #4CAF50;
+  --color-error: #B91C1C;
+  --color-border: #E5E7EB;
+
+  --font-display: "Montserrat", sans-serif;
+  --font-body: "Montserrat", sans-serif;
+
+  --breakpoint-xs: 375px;
+
+  --radius-card: 0.75rem;
+  --radius-input: 0.75rem;
+  --radius-pill: 1.5rem;
+  --radius-cta: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  --spacing-container: 1280px;
+
+  --animate-fade-up: fade-up 0.3s ease-out forwards;
+
+  --animate-float-subtle: float-subtle 6s ease-in-out infinite;
+  --animate-drift: drift 12s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
+  --animate-hero-gradient: hero-gradient 8s ease-in-out infinite;
+  --animate-ken-burns: ken-burns 8s linear forwards;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes fade-up {
+    0% { opacity: 0; transform: translateY(16px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float-subtle {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(15px, -8px) scale(1.02); }
+    66% { transform: translate(-10px, 5px) scale(0.98); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.08); }
+  }
+
+  @keyframes hero-gradient {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes ken-burns {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+  }
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+}
 
 @layer base {
   html {
@@ -20,7 +115,7 @@
   }
 
   *:focus-visible {
-    @apply outline-2 outline-offset-2 outline-accent;
+    @apply outline-2 outline-offset-2 outline-brand-navy;
   }
 }
 
@@ -33,5 +128,32 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+.skip-to-content {
+  @apply absolute -top-10 left-4 z-50 bg-brand-navy text-white px-4 py-2 rounded transition-all;
+}
+.skip-to-content:focus {
+  @apply top-4;
+}
+
+/* Disable accordion height transitions for reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  [data-state="open"],
+  [data-state="closed"] {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

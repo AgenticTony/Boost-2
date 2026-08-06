@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { supabase } from "@/lib/supabase";
+import { translateAuthError } from "@/lib/auth-errors";
 
 // ── Types ───────────────────────────────────────────────
 
@@ -28,46 +29,45 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 // ── Provider ────────────────────────────────────────────
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch the user's profile from the profiles table
   async function fetchProfile(userId: string, email: string | undefined) {
-    const { data } = await supabase
-      .from("profiles")
-      .select("id, full_name, approved, is_admin")
-      .eq("id", userId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, approved, is_admin")
+        .eq("id", userId)
+        .single();
 
-    if (data) {
-      setUser({
-        ...data,
-        email: email ?? "",
-      });
-    } else {
-      // Profile doesn't exist yet (shouldn't happen — trigger creates it)
+      if (error) {
+        console.error("Profile fetch error:", error);
+        setUser(null);
+      } else if (data) {
+        setUser({
+          ...data,
+          email: email ?? "",
+        });
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      console.error("Profile fetch failed:", err);
       setUser(null);
     }
     setIsLoading(false);
   }
 
-  // Listen for auth state changes
+  // Listen for auth state changes (single subscription, no getSession double-fire)
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        fetchProfile(session.user.id, session.user.email);
-      } else {
-        setUser(null);
-        setIsLoading(false);
-      }
-    });
+    let isMounted = true;
 
-    // Listen for changes (login, logout, token refresh)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
       } else {
@@ -76,7 +76,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   // ── Login ───────────────────────────────────────────
@@ -89,12 +92,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        return { success: false, error: "Felaktig e-post eller lösenord" };
+        return { success: false, error: translateAuthError(error.message) };
       }
 
       return { success: true };
-    } catch (err) {
-      console.error("Login error:", err);
+    } catch {
       return { success: false, error: "Ett fel uppstod. Försök igen." };
     }
   };
@@ -112,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        return { success: false, error: translateError(error.message) };
+        return { success: false, error: translateAuthError(error.message) };
       }
 
       if (!data.user) {
@@ -120,8 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       return { success: true };
-    } catch (err) {
-      console.error("Register error:", err);
+    } catch {
       return { success: false, error: "Ett fel uppstod. Försök igen om en stund." };
     }
   };
@@ -134,7 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (error) {
-      return { success: false, error: "Kunde inte skicka återställningslänk." };
+      return { success: false, error: translateAuthError(error.message) };
     }
 
     return { success: true };
@@ -143,7 +144,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // ── Logout ──────────────────────────────────────────
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
     setUser(null);
     window.location.href = "/login";
   };
@@ -164,15 +169,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-// ── Error translation ────────────────────────────────────
-
-function translateError(message: string): string {
-  if (message.includes("already registered")) return "E-postadressen är redan registrerad";
-  if (message.includes("Password should be")) return "Lösenordet är för svagt (minst 6 tecken)";
-  if (message.includes("Invalid email")) return "Ogiltig e-postadress";
-  return "Ett fel uppstod. Försök igen.";
 }
 
 // ── Hook ────────────────────────────────────────────────

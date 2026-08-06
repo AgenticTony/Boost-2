@@ -10,10 +10,10 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-surface">
+      <div className="flex items-center justify-center min-h-screen bg-surface text-text">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto"></div>
-          <p className="mt-4 text-secondary">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand-navy/20 border-t-brand-navy mx-auto" />
+          <p className="mt-4 text-text-muted">Laddar...</p>
         </div>
       </div>
     );
@@ -27,7 +27,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   // Logged in but not approved yet → show pending message
   if (user && !user.approved) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-surface p-6">
+      <div className="flex items-center justify-center min-h-screen bg-surface text-text p-6">
         <div className="max-w-md text-center">
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 text-amber-600 mb-6">
             <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
