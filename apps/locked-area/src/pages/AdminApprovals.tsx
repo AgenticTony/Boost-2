@@ -73,8 +73,11 @@ export default function AdminApprovals() {
   };
 
   useEffect(() => {
-    fetchPending();
-  }, [fetchPending]);
+    if (!isAdmin) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchPending();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!isAdmin) {
     return (
