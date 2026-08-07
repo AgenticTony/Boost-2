@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { translateAuthError } from "@/lib/auth-errors";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password-policy";
 
 describe("translateAuthError", () => {
   it("translates invalid login credentials", () => {
@@ -14,10 +15,15 @@ describe("translateAuthError", () => {
     );
   });
 
-  it("translates weak password", () => {
-    expect(translateAuthError("Password should be at least 6 characters")).toBe(
-      "Lösenordet är för svagt (minst 6 tecken)",
+  it("translates weak password using the app's own policy", () => {
+    // Supabase reports its own minimum, which is looser than what this app
+    // asks for. Echoing Supabase's number told members "minst 6 tecken" while
+    // the form in front of them refused anything under 8.
+    const message = translateAuthError(
+      "Password should be at least 6 characters",
     );
+    expect(message).toContain(`minst ${MIN_PASSWORD_LENGTH} tecken`);
+    expect(message).not.toContain("6 tecken");
   });
 
   it("translates invalid email", () => {

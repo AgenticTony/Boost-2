@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [hasSession, setHasSession] = useState(false);
   const navigate = useNavigate();
 
   // Guards every state write, including those after an await. The previous
@@ -122,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isMounted.current) return;
+      setHasSession(Boolean(session?.user));
       if (session?.user) {
         void fetchProfile(session.user.id, session.user.email);
       } else {
@@ -210,6 +212,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // ── Update password ─────────────────────────────────
+
+  // Lives here rather than in the page so that reset-password does not reach
+  // for the supabase singleton directly, and so its failures go through the
+  // same Swedish translation as every other auth error - the page previously
+  // rendered Supabase's raw English message.
+  const updatePassword = async (password: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+
+      if (error) {
+        return { success: false, error: translateAuthError(error.message) };
+      }
+
+      return { success: true };
+    } catch {
+      return { success: false, error: GENERIC_ERROR };
+    }
+  };
+
   // ── Logout ──────────────────────────────────────────
 
   const logout = async () => {
@@ -222,6 +244,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isMounted.current) {
       setUser(null);
       setProfileError(null);
+      setHasSession(false);
       setIsLoading(false);
     }
     navigate("/login", { replace: true });
@@ -235,9 +258,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin: user?.is_admin ?? false,
         isLoading,
         profileError,
+        hasSession,
         login,
         register,
         resetPassword,
+        updatePassword,
         logout,
       }}
     >

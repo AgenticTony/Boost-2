@@ -1,67 +1,121 @@
-import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
-import { supabase } from "@/lib/supabase"
-import { Lock, Eye, EyeOff, Check, X, ArrowLeft } from "lucide-react"
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Check, ArrowLeft, AlertTriangle } from "lucide-react";
+import { useAuth } from "@/auth/use-auth";
+import { passwordSchema } from "@/lib/password-policy";
+import { PasswordStrength } from "@/components/auth/password-strength";
+import { Card } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 
-interface PasswordRequirement {
-  label: string
-  met: boolean
-}
+const REDIRECT_DELAY_MS = 3000;
+
+const schema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, "Bekräfta ditt lösenord"),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: "Lösenorden matchar inte",
+    path: ["confirmPassword"],
+  });
+
+type Values = z.infer<typeof schema>;
 
 export default function ResetPassword() {
-  const navigate = useNavigate()
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+  const navigate = useNavigate();
+  const { updatePassword, hasSession, isLoading } = useAuth();
+  const [done, setDone] = useState(false);
 
-  const passwordRequirements: PasswordRequirement[] = [
-    { label: 'Minst 8 tecken', met: newPassword.length >= 8 },
-    { label: 'En stor bokstav', met: /[A-Z]/.test(newPassword) },
-    { label: 'En siffra', met: /[0-9]/.test(newPassword) },
-    { label: 'Ett specialtecken (!@#$%^&*)', met: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword) },
-  ]
+  const {
+    register,
+    handleSubmit,
+    control,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { password: "", confirmPassword: "" },
+  });
 
-  const strengthScore = passwordRequirements.filter((r) => r.met).length
-  const strengthLabel = ['Svag', 'Svag', 'Medel', 'Stark', 'Mycket stark'][strengthScore]
-  const strengthColor = ['bg-error', 'bg-error', 'bg-brand-gold', 'bg-brand-navy', 'bg-success'][strengthScore]
+  const password = useWatch({ control, name: "password" });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  // Redirect after the confirmation has been on screen long enough to read.
+  // Driven by an effect rather than a timer started in the submit handler, so
+  // the cleanup is tied to the component's lifetime and the timer cannot fire
+  // against a screen the member has already navigated away from.
+  useEffect(() => {
+    if (!done) return;
+    const timer = setTimeout(
+      () => navigate("/login", { replace: true }),
+      REDIRECT_DELAY_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [done, navigate]);
 
-    if (newPassword !== confirmPassword) {
-      setError('Lösenorden matchar inte')
-      return
-    }
+  const onSubmit = async (values: Values) => {
+    const result = await updatePassword(values.password);
 
-    if (strengthScore < 4) {
-      setError('Lösenordet uppfyller inte alla krav')
-      return
-    }
-
-    setIsLoading(true)
-    const { error: updateError } = await supabase.auth.updateUser({ password: newPassword })
-    setIsLoading(false)
-
-    if (updateError) {
-      setError(updateError.message || 'Ett fel uppstod.')
+    if (result.success) {
+      setDone(true);
     } else {
-      setSuccess(true)
-      setTimeout(() => navigate('/login'), 3000)
+      setError("root", { message: result.error || "Ett fel uppstod." });
     }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <Spinner size="lg" label="Kontrollerar länken" />
+      </div>
+    );
   }
 
-  if (success) {
+  // Opening /reset-password without a recovery session means the link expired,
+  // was already used, or the page was reached directly. Previously the form
+  // rendered anyway and only failed on submit, with Supabase's raw English
+  // error as the only explanation.
+  if (!hasSession) {
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center p-6 font-body">
-        <div className="w-full max-w-md bg-white rounded-card border border-border p-8 text-center shadow-md">
-          <div className="w-12 h-12 rounded-input bg-success/10 flex items-center justify-center mx-auto mb-4">
-            <Check className="w-6 h-6 text-success" />
+        <Card className="w-full max-w-md p-8 text-center shadow-md">
+          <div className="w-12 h-12 rounded-input bg-brand-red-light flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle
+              className="w-6 h-6 text-brand-red"
+              aria-hidden="true"
+            />
           </div>
-          <h2 className="text-xl font-display font-bold text-text mb-2">Lösenord uppdaterat!</h2>
+          <h2 className="text-xl font-display font-bold text-text mb-2">
+            Länken är ogiltig eller har gått ut
+          </h2>
+          <p className="text-text-muted text-sm mb-6">
+            Återställningslänkar går att använda en gång och är giltiga en
+            begränsad tid. Begär en ny så skickar vi ett nytt mejl.
+          </p>
+          <Button asChild>
+            <Link to="/forgot-password">Begär en ny länk</Link>
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (done) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center p-6 font-body">
+        <Card className="w-full max-w-md p-8 text-center shadow-md">
+          <div className="w-12 h-12 rounded-input bg-success/10 flex items-center justify-center mx-auto mb-4">
+            <Check className="w-6 h-6 text-success" aria-hidden="true" />
+          </div>
+          <h2 className="text-xl font-display font-bold text-text mb-2">
+            Lösenord uppdaterat!
+          </h2>
           <p className="text-text-muted text-sm mb-4">
             Ditt lösenord har ändrats. Du omdirigeras till inloggningen...
           </p>
@@ -69,120 +123,72 @@ export default function ResetPassword() {
             to="/login"
             className="inline-flex items-center gap-2 text-brand-red hover:text-brand-red/80 text-sm font-medium"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Gå till inloggning
           </Link>
-        </div>
+        </Card>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-6 font-body">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-card border border-border p-8 shadow-md">
-          <h2 className="text-2xl font-display font-bold text-text text-center mb-2">Nytt lösenord</h2>
+        <Card className="p-8 shadow-md">
+          <h2 className="text-2xl font-display font-bold text-text text-center mb-2">
+            Nytt lösenord
+          </h2>
           <p className="text-text-muted text-center text-sm mb-6">
             Välj ett nytt lösenord för ditt konto.
           </p>
 
-          {error && (
-            <div role="alert" className="mb-4 p-3 rounded-input bg-error/10 border border-error/20 text-error text-sm flex items-center gap-2">
-              <X className="w-4 h-4 flex-shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+          >
+            {errors.root && (
+              <Alert variant="error">{errors.root.message}</Alert>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="reset-password" className="block text-sm font-medium text-text mb-1.5">
-                Nytt lösenord
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
-                <input
-                  id="reset-password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  className="w-full pl-10 pr-10 py-2.5 bg-white border border-border rounded-input text-text placeholder:text-text-muted/60 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Dölj lösenord' : 'Visa lösenord'}
-                  aria-pressed={showPassword}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-
-              {newPassword && (
-                <div className="mt-3 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
-                      <div
-                        className={`h-full ${strengthColor} transition-all duration-300`}
-                        style={{ width: `${(strengthScore / 4) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-text-muted w-20 text-right">{strengthLabel}</span>
-                  </div>
-                  <ul className="space-y-1">
-                    {passwordRequirements.map((req) => (
-                      <li key={req.label} className="flex items-center gap-1.5 text-xs">
-                        {req.met ? (
-                          <Check className="w-3 h-3 text-success" />
-                        ) : (
-                          <X className="w-3 h-3 text-text-muted" />
-                        )}
-                        <span className={req.met ? 'text-success' : 'text-text-muted'}>
-                          {req.label}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="reset-confirm" className="block text-sm font-medium text-text mb-1.5">
-                Bekräfta lösenord
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
-                <input
-                  id="reset-confirm"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-border rounded-input text-text placeholder:text-text-muted/60 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
-                  placeholder="••••••••"
-                />
-              </div>
-              {confirmPassword && newPassword !== confirmPassword && (
-                <p className="mt-1 text-xs text-error">Lösenorden matchar inte</p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || strengthScore < 4}
-              className="w-full py-2.5 bg-brand-red hover:bg-brand-red/90 text-white font-semibold rounded-cta transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            <Field
+              id="reset-password"
+              label="Nytt lösenord"
+              error={errors.password?.message}
+              hint={<PasswordStrength value={password} />}
             >
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              ) : (
-                'Uppdatera lösenord'
+              {(field) => (
+                <PasswordInput
+                  {...field}
+                  {...register("password")}
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                />
               )}
-            </button>
+            </Field>
+
+            <Field
+              id="reset-confirm"
+              label="Bekräfta lösenord"
+              error={errors.confirmPassword?.message}
+            >
+              {(field) => (
+                <PasswordInput
+                  {...field}
+                  {...register("confirmPassword")}
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                />
+              )}
+            </Field>
+
+            <Button type="submit" block disabled={isSubmitting}>
+              {isSubmitting ? (
+                <Spinner size="sm" tone="onDark" label="Uppdaterar" />
+              ) : (
+                "Uppdatera lösenord"
+              )}
+            </Button>
           </form>
 
           <div className="mt-6 text-center">
@@ -190,12 +196,12 @@ export default function ResetPassword() {
               to="/login"
               className="inline-flex items-center gap-2 text-text-muted hover:text-text text-sm transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               Tillbaka till inloggning
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
-  )
+  );
 }
