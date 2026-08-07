@@ -4,6 +4,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ProtectedRoute } from "@/components/protected-route";
 import { AppLayout } from "@/components/layout/app-layout";
+import { LoadingState } from "@/components/ui/spinner";
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 
@@ -21,9 +22,7 @@ const AdminApprovals = lazy(() => import("@/pages/admin-approvals"));
 
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-navy" />
-    </div>
+    <LoadingState size="lg" className="min-h-[60vh]" label="Laddar sidan" />
   );
 }
 

@@ -30,6 +30,24 @@
   --color-error: #B91C1C;
   --color-border: #E5E7EB;
 
+  /* Neutral surface tokens.
+     These were referenced by components long before they were defined, so
+     `bg-muted`, `bg-card`, `text-muted-foreground` and `ring-foreground/10`
+     generated no CSS at all under Tailwind v4 - the classes were simply
+     dropped. The visible consequence was that every skeleton loader
+     (App.tsx, nyheter, team-section, lediga-tjanster, resurser) painted no
+     background and so rendered as blank space, the tinted section panels on
+     the policy pages came out untinted, and the outline/ghost button
+     variants had no hover state.
+     Mapped onto the existing palette so this restores the intended look
+     rather than introducing a new one: muted-foreground and card-foreground
+     are the same values as text-muted and text. */
+  --color-muted: #EFEBE5;
+  --color-muted-foreground: #555B66;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #333333;
+  --color-foreground: #333333;
+
   --font-display: "Montserrat", sans-serif;
   --font-body: "Montserrat", sans-serif;
 

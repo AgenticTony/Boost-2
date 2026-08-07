@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/auth/use-auth";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
   const { logout, user, isAdmin } = useAuth();
@@ -39,7 +40,11 @@ export function Header() {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
-            <Link key={link.path} to={link.path} className={linkClass(link.path)}>
+            <Link
+              key={link.path}
+              to={link.path}
+              className={linkClass(link.path)}
+            >
               {link.label}
             </Link>
           ))}
@@ -48,19 +53,13 @@ export function Header() {
         {/* Right side: admin + logout + avatar */}
         <div className="hidden md:flex items-center gap-3">
           {isAdmin && (
-            <Link
-              to="/admin/approvals"
-              className={linkClass("/admin")}
-            >
+            <Link to="/admin/approvals" className={linkClass("/admin")}>
               Admin
             </Link>
           )}
-          <button
-            onClick={logout}
-            className="px-4 py-2 text-sm font-medium rounded-pill border border-brand-red/30 text-brand-red-bright hover:bg-brand-red/10 transition-colors"
-          >
+          <Button onClick={logout} variant="onDark" className="rounded-pill">
             Logga ut
-          </button>
+          </Button>
           {user && (
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-white/10 text-brand-gold flex items-center justify-center text-xs font-bold uppercase">
@@ -107,15 +106,17 @@ export function Header() {
                 Admin
               </Link>
             )}
-            <button
+            <Button
               onClick={() => {
                 logout();
                 setMenuOpen(false);
               }}
-              className="px-3 py-2 text-sm font-medium rounded-pill border border-brand-red/30 text-brand-red-bright hover:bg-brand-red/10 transition-colors text-left"
+              variant="onDark"
+              size="sm"
+              className="rounded-pill justify-start"
             >
               Logga ut
-            </button>
+            </Button>
             {user && (
               <div className="flex items-center gap-2 px-3 py-2">
                 <div className="w-8 h-8 rounded-full bg-white/10 text-brand-gold flex items-center justify-center text-xs font-bold uppercase">
