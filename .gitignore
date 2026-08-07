@@ -30,6 +30,10 @@ obj/
 .vscode/
 .vs/
 .idea/
+
+# Claude Code local config (launch.json, settings, agents) — machine-specific,
+# never shared with the team
+.claude/
 *.swp
 *.swo
 *~
