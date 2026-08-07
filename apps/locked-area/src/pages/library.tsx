@@ -14,26 +14,30 @@ import {
   Zap,
   ChevronRight,
   Users,
-  Star
+  Star,
 } from "lucide-react";
 import { useExercises, type Exercise } from "@/hooks/use-exercises";
 import { GuideSection } from "@/components/guide-section";
 import { FutureFeatures } from "@/components/future-features";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 
 export default function Library() {
   const { data: exercises, isLoading, error } = useExercises();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [showInfo, setShowInfo] = useState(true);
   const navigate = useNavigate();
 
-  const difficulties = ['all', 'Lätt', 'Medel', 'Svår'];
+  const difficulties = ["all", "Lätt", "Medel", "Svår"];
 
   const filteredExercises = exercises.filter((ex: Exercise) => {
-    const matchesSearch = ex.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         ex.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         ex.muscleGroups?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDifficulty = selectedDifficulty === 'all' || ex.difficulty === selectedDifficulty;
+    const matchesSearch =
+      ex.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ex.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ex.muscleGroups?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDifficulty =
+      selectedDifficulty === "all" || ex.difficulty === selectedDifficulty;
     return matchesSearch && matchesDifficulty;
   });
 
@@ -44,70 +48,72 @@ export default function Library() {
   const guideSteps = [
     {
       title: "Sök efter övningar",
-      description: "Använd sökfältet för att hitta specifika övningar eller muskelgrupper. Du kan söka på övningens namn, färdighet eller fokusområde."
+      description:
+        "Använd sökfältet för att hitta specifika övningar eller muskelgrupper. Du kan söka på övningens namn, färdighet eller fokusområde.",
     },
     {
       title: "Filtrera efter svårighetsgrad",
-      description: "Välj Lätt, Medel eller Svår för att hitta övningar som matchar din grupps nivå. Alla nivåer visar samtliga övningar."
+      description:
+        "Välj Lätt, Medel eller Svår för att hitta övningar som matchar din grupps nivå. Alla nivåer visar samtliga övningar.",
     },
     {
       title: "Utforska detaljer",
-      description: "Klicka på 'Visa övning' för att se detaljerad instruktion, bilder, video och tips för genomförande."
+      description:
+        "Klicka på 'Visa övning' för att se detaljerad instruktion, bilder, video och tips för genomförande.",
     },
     {
       title: "Spara favoriter",
-      description: "Markera övningar som favoriter för snabb åtkomst. Dina favoriter sparas och är tillgängliga från alla enheter."
-    }
+      description:
+        "Markera övningar som favoriter för snabb åtkomst. Dina favoriter sparas och är tillgängliga från alla enheter.",
+    },
   ];
 
   const futureFeatures = [
     {
       icon: Search,
       title: "Avancerad Filtrering",
-      description: "Filtrera på ålder, gruppstorlek, utrustning och träningsfokus.",
-      status: "Kommer Q3 2026"
+      description:
+        "Filtrera på ålder, gruppstorlek, utrustning och träningsfokus.",
+      status: "Kommer Q3 2026",
     },
     {
       icon: Star,
       title: "Favoriter & Samlingar",
       description: "Skapa egna övningspass och spara dem som samlingar.",
-      status: "Kommer Q3 2026"
+      status: "Kommer Q3 2026",
     },
     {
       icon: BookOpen,
       title: "Träningsplaner",
       description: "Färdiga träningsplaner för olika åldrar och nivåer.",
-      status: "Kommer Q4 2026"
+      status: "Kommer Q4 2026",
     },
     {
       icon: Users,
       title: "Dela med Teamet",
       description: "Dela övningar och planer med andra ledare i ditt team.",
-      status: "Kommer Q4 2026"
+      status: "Kommer Q4 2026",
     },
     {
       icon: Clock,
       title: "Tidsplanering",
       description: "Planera hela träningspass med tidsangivelser och pauser.",
-      status: "Kommer 2027"
+      status: "Kommer 2027",
     },
     {
       icon: Dumbbell,
       title: "Videoövningar",
-      description: "Se instruktionsvideor för varje övning direkt i biblioteket.",
-      status: "Kommer 2027"
-    }
+      description:
+        "Se instruktionsvideor för varje övning direkt i biblioteket.",
+      status: "Kommer 2027",
+    },
   ];
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-surface">
         <div className="pt-32 flex justify-center items-center">
-          <div
-            className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red"
-            role="status"
-            aria-label="Laddar övningar"
-          />
+          <Spinner size="lg" tone="accent" label="Laddar övningar" />
         </div>
       </div>
     );
@@ -119,8 +125,12 @@ export default function Library() {
         <div className="container-page pt-32">
           <div className="bg-error/10 border border-error/20 rounded-card p-6 text-error text-center">
             <Info className="w-12 h-12 mx-auto mb-4" />
-            <h3 className="text-lg font-display font-semibold mb-2">Kunde inte ladda övningar</h3>
-            <p className="text-text-muted">Försök igen senare eller kontakta support.</p>
+            <h3 className="text-lg font-display font-semibold mb-2">
+              Kunde inte ladda övningar
+            </h3>
+            <p className="text-text-muted">
+              Försök igen senare eller kontakta support.
+            </p>
           </div>
         </div>
       </div>
@@ -142,29 +152,40 @@ export default function Library() {
               <div className="w-10 h-10 bg-brand-red/10 rounded-input flex items-center justify-center">
                 <BookOpen className="w-5 h-5 text-brand-red" />
               </div>
-              <span className="text-brand-red text-sm font-semibold uppercase tracking-wider">Övningsbibliotek</span>
+              <span className="text-brand-red text-sm font-semibold uppercase tracking-wider">
+                Övningsbibliotek
+              </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-6 leading-tight text-text">
-              Ditt kompletta <span className="text-brand-red">träningsbibliotek</span>
+              Ditt kompletta{" "}
+              <span className="text-brand-red">träningsbibliotek</span>
             </h1>
             <p className="text-lg text-text-muted mb-8 leading-relaxed">
-              Utforska vårt bibliotek med professionellt utvecklade övningar för alla nivåer.
-              Filtrera efter svårighetsgrad, sök efter muskelgrupper och hitta de perfekta övningarna för ditt träningsprogram.
+              Utforska vårt bibliotek med professionellt utvecklade övningar för
+              alla nivåer. Filtrera efter svårighetsgrad, sök efter
+              muskelgrupper och hitta de perfekta övningarna för ditt
+              träningsprogram.
             </p>
 
             {/* Stats */}
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
                 <Layers className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">{exercises.length} övningar</span>
+                <span className="text-sm font-medium text-text">
+                  {exercises.length} övningar
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
                 <Award className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">Alla nivåer</span>
+                <span className="text-sm font-medium text-text">
+                  Alla nivåer
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
                 <Zap className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">Expertguidade</span>
+                <span className="text-sm font-medium text-text">
+                  Expertguidade
+                </span>
               </div>
             </div>
           </div>
@@ -181,8 +202,13 @@ export default function Library() {
               </div>
               <div className="flex-1">
                 <p className="text-text text-sm">
-                  <span className="font-semibold">Så här använder du biblioteket:</span> Använd sökfältet för att hitta specifika övningar eller muskelgrupper.
-                  Filtrera efter svårighetsgrad för att hitta övningar som matchar din nivå. Klicka på &quot;Visa övning&quot; för detaljerad instruktion.
+                  <span className="font-semibold">
+                    Så här använder du biblioteket:
+                  </span>{" "}
+                  Använd sökfältet för att hitta specifika övningar eller
+                  muskelgrupper. Filtrera efter svårighetsgrad för att hitta
+                  övningar som matchar din nivå. Klicka på &quot;Visa
+                  övning&quot; för detaljerad instruktion.
                 </p>
               </div>
               <button
@@ -222,13 +248,14 @@ export default function Library() {
                   <button
                     key={diff}
                     onClick={() => setSelectedDifficulty(diff)}
-                    className={`px-4 py-2 rounded-input text-sm font-semibold transition-all ${
+                    className={cn(
+                      "px-4 py-2 rounded-input text-sm font-semibold transition-all",
                       selectedDifficulty === diff
-                        ? 'bg-brand-navy text-white shadow-sm'
-                        : 'bg-white text-text-muted hover:text-text border border-border'
-                    }`}
+                        ? "bg-brand-navy text-white shadow-sm"
+                        : "bg-white text-text-muted hover:text-text border border-border",
+                    )}
                   >
-                    {diff === 'all' ? 'Alla' : diff}
+                    {diff === "all" ? "Alla" : diff}
                   </button>
                 ))}
               </div>
@@ -244,15 +271,29 @@ export default function Library() {
             <div className="w-20 h-20 bg-white rounded-pill flex items-center justify-center mx-auto mb-4 border border-border">
               <Search className="w-10 h-10 text-text-muted" />
             </div>
-            <h3 className="text-xl font-display font-semibold text-text mb-2">Inga övningar hittades</h3>
-            <p className="text-text-muted">Försök med en annan sökning eller filter.</p>
+            <h3 className="text-xl font-display font-semibold text-text mb-2">
+              Inga övningar hittades
+            </h3>
+            <p className="text-text-muted">
+              Försök med en annan sökning eller filter.
+            </p>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-6">
               <p className="text-text-muted text-sm">
-                Visar <span className="font-semibold text-text">{filteredExercises.length}</span> övningar
-                {searchQuery && <span> för &quot;<span className="font-semibold">{searchQuery}</span>&quot;</span>}
+                Visar{" "}
+                <span className="font-semibold text-text">
+                  {filteredExercises.length}
+                </span>{" "}
+                övningar
+                {searchQuery && (
+                  <span>
+                    {" "}
+                    för &quot;
+                    <span className="font-semibold">{searchQuery}</span>&quot;
+                  </span>
+                )}
               </p>
             </div>
 
@@ -267,11 +308,15 @@ export default function Library() {
                   <div className="relative h-48 bg-gradient-to-br from-brand-navy to-surface flex items-center justify-center overflow-hidden">
                     <Dumbbell className="w-16 h-16 text-white/30 group-hover:scale-110 transition-transform duration-300" />
                     <div className="absolute top-3 right-3">
-                      <span className={`px-3 py-1 rounded-pill text-xs font-bold ${
-                        exercise.difficulty === 'Lätt' ? 'bg-success/20 text-success' :
-                        exercise.difficulty === 'Medel' ? 'bg-brand-gold/20 text-brand-gold' :
-                        'bg-brand-red/20 text-brand-red'
-                      }`}>
+                      <span
+                        className={`px-3 py-1 rounded-pill text-xs font-bold ${
+                          exercise.difficulty === "Lätt"
+                            ? "bg-success/20 text-success"
+                            : exercise.difficulty === "Medel"
+                              ? "bg-brand-gold/20 text-brand-gold"
+                              : "bg-brand-red/20 text-brand-red"
+                        }`}
+                      >
                         {exercise.difficulty}
                       </span>
                     </div>
@@ -292,7 +337,10 @@ export default function Library() {
                       </div>
                       <div className="flex items-center gap-1.5 text-sm text-text-muted">
                         <Target className="w-4 h-4" />
-                        <span>{exercise.muscleGroups?.split(',')[0] || 'Hela kroppen'}</span>
+                        <span>
+                          {exercise.muscleGroups?.split(",")[0] ||
+                            "Hela kroppen"}
+                        </span>
                       </div>
                     </div>
 

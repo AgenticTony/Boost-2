@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/auth/use-auth";
 import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Alert } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 
 interface PendingUser {
   id: string;
@@ -76,7 +80,7 @@ export default function AdminApprovals() {
     if (!isAdmin) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchPending();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isAdmin) {
@@ -94,11 +98,7 @@ export default function AdminApprovals() {
   if (loading)
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center">
-        <div
-          className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red"
-          role="status"
-          aria-label="Laddar"
-        />
+        <Spinner size="lg" tone="accent" label="Laddar användare" />
       </div>
     );
 
@@ -106,7 +106,7 @@ export default function AdminApprovals() {
     return (
       <div className="min-h-screen bg-surface">
         <div className="container-page py-12">
-          <p className="text-error">{error}</p>
+          <Alert variant="error">{error}</Alert>
         </div>
       </div>
     );
@@ -118,17 +118,17 @@ export default function AdminApprovals() {
           Godkänn nya användare
         </h1>
         {pendingUsers.length === 0 ? (
-          <div className="bg-white rounded-card border border-border p-8 text-center shadow-sm">
+          <Card className="p-8 text-center">
             <p className="text-text-muted leading-relaxed">
               Inga användare väntar på godkännande.
             </p>
-          </div>
+          </Card>
         ) : (
           <ul className="space-y-4">
             {pendingUsers.map((user) => (
               <li
                 key={user.id}
-                className="bg-white border border-border rounded-card p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 shadow-sm"
+                className="bg-card border border-border rounded-card shadow-sm p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
               >
                 <div>
                   <p className="font-semibold text-text">
@@ -141,18 +141,20 @@ export default function AdminApprovals() {
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <button
+                  <Button
+                    variant="success"
+                    shape="rounded"
                     onClick={() => approveUser(user.id)}
-                    className="bg-success text-white px-4 py-2 rounded-input hover:bg-success/90 transition-colors font-medium text-sm"
                   >
                     Godkänn
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="danger"
+                    shape="rounded"
                     onClick={() => denyUser(user.id)}
-                    className="border border-brand-red text-brand-red px-4 py-2 rounded-input hover:bg-brand-red/5 transition-colors font-medium text-sm"
                   >
                     Neka
-                  </button>
+                  </Button>
                 </div>
               </li>
             ))}

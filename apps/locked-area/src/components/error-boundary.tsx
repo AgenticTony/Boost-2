@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { AlertTriangle, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   children: ReactNode;
@@ -52,19 +53,18 @@ export class ErrorBoundary extends Component<Props, State> {
               Ett oväntat fel uppstod. Försök igen.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <button
-                className="inline-flex items-center justify-center px-6 py-3 rounded-cta font-display font-semibold bg-white text-text hover:bg-surface-dark/5 transition-colors border border-border"
+              <Button
+                variant="outline"
+                size="lg"
+                className="font-display font-semibold"
                 onClick={this.handleRetry}
               >
-                <RotateCcw className="mr-2 h-4 w-4" />
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
                 Försök igen
-              </button>
-              <Link
-                to="/"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-cta font-display font-semibold bg-brand-red text-white hover:bg-brand-red/90 transition-colors"
-              >
-                Till startsidan
-              </Link>
+              </Button>
+              <Button asChild size="lg" className="font-display font-semibold">
+                <Link to="/">Till startsidan</Link>
+              </Button>
             </div>
           </div>
         </section>
