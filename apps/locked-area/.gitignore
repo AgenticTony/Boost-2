@@ -3,3 +3,5 @@
 .env.*.local
 .dev.vars
 .wrangler/
+# Supabase CLI local state (project ref, pooler URLs) — machine-specific
+supabase/.temp/

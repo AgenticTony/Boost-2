@@ -7,7 +7,10 @@
     "build:locked": "cd apps/locked-area && npm run build",
     "dev": "npm run dev:public & npm run dev:locked",
     "dev:public": "cd apps/public-site && npm run dev",
-    "dev:locked": "cd apps/locked-area && npm run dev"
+    "dev:locked": "cd apps/locked-area && npm run dev",
+    "verify": "npm run verify:public && npm run verify:locked",
+    "verify:public": "cd apps/public-site && npm run lint && npx tsc -b && npm run test && npm run build",
+    "verify:locked": "cd apps/locked-area && npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
     "cors": "^2.8.6",

@@ -7,9 +7,9 @@ Members-only portal for Boost by FC Rosengård. Contains the exercise library, r
 - **React 19** + **TypeScript 6** (strict mode)
 - **Vite 8** (build + dev server)
 - **Tailwind CSS v4** (CSS-first `@theme`, no JS config)
-- **Supabase** (authentication + database)
-- **Framer Motion** (animations)
+- **Supabase** (authentication + database, plus one Edge Function)
 - **react-router-dom v7** (routing with lazy-loaded pages)
+- **react-hook-form** + **zod** (forms and validation)
 - **Vitest** + **@testing-library/react** (testing)
 
 ## Getting Started
@@ -51,8 +51,21 @@ Run the files in `sql/` **in order** in your Supabase SQL Editor.
 - Recreates the policies idempotently, with an explicit `WITH CHECK`
 - Narrows `UPDATE` to the `approved` and `denied` columns only
 
-Both are safe to re-run — 01 is not idempotent on its policies, so if it
-errors on a second run, skip to 02, which recreates them anyway.
+`03_rpc_exposure.sql` then closes two Supabase advisor findings:
+- Revokes `EXECUTE` on `handle_new_user()` from `PUBLIC`, `anon` and
+  `authenticated` — it is a trigger function and was never meant to be
+  reachable at `/rest/v1/rpc/`. It is granted to `supabase_auth_admin`
+  first, which is the role that actually fires it on signup.
+- Revokes `EXECUTE` on `is_admin()` from `anon`.
+
+`authenticated` deliberately keeps `EXECUTE` on `is_admin()`: the RLS
+policies call it inside `USING`/`WITH CHECK`, and Postgres checks that
+privilege against the querying role. Supabase's linter still reports it —
+that finding is a known false positive here, not something to "fix".
+
+Run them in order. 02 and 03 are safe to re-run; 01 is not idempotent on
+its policies, so if it errors on a second run, skip to 02, which
+recreates them anyway.
 
 ### First Admin
 

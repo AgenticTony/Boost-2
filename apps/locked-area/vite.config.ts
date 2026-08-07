@@ -45,5 +45,37 @@ export default defineConfig({
       VITE_SUPABASE_URL: "http://localhost:54321",
       VITE_SUPABASE_ANON_KEY: "test-anon-key",
     },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      // `include` is what makes this honest. With no include, v8 only
+      // instruments files a test happens to import, so the report read
+      // "88% - 22/25 statements" while AuthContext, ProtectedRoute, routing
+      // and every page were absent from the denominator entirely. A coverage
+      // number that omits the untested code is worse than none: it reads as
+      // reassurance. Naming the sources puts them all in the denominator
+      // whether or not a test touches them - 583 statements, not 25.
+      //
+      // (Vitest 4 removed the separate `all` flag; `include` now carries it.)
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/**/*.test.{ts,tsx}",
+        "src/test/**",
+        "src/env.d.ts",
+        // Composition roots: a few lines of wiring with no branches, and
+        // covering them means asserting on ReactDOM rather than on this app.
+        "src/main.tsx",
+      ],
+      // Set just under what the suite currently clears (81 / 73 / 77 / 83),
+      // not to an aspiration. A threshold above the real number fails the
+      // build on day one and gets deleted within the week. Raise these as
+      // coverage grows - that is the whole mechanism.
+      thresholds: {
+        statements: 80,
+        branches: 70,
+        functions: 75,
+        lines: 80,
+      },
+    },
   },
 });

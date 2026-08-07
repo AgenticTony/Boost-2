@@ -37,7 +37,7 @@ export function AuthHero() {
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('/images/deltagare_boostbyfcr_pa_trappa-scaled.jpg')",
+            "url('/images/deltagare_boostbyfcr_pa_trappa.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-brand-navy/80" />
