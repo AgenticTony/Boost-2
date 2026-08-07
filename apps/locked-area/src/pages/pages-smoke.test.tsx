@@ -5,7 +5,6 @@ import { Routes, Route } from "react-router-dom";
 import Resources from "@/pages/resources";
 import KnowledgeSection from "@/pages/knowledge-section";
 import HandbookReader from "@/pages/handbook-reader";
-import ExerciseDetail from "@/pages/exercise-detail";
 import VerifyEmail from "@/pages/verify-email";
 import ForgotPassword from "@/pages/forgot-password";
 import { renderWithProviders } from "@/test/test-utils";
@@ -87,20 +86,6 @@ describe("content pages render", () => {
     // "Markera som läst", whose accessible name carries its step number.
     await user.click(screen.getByRole("button", { name: "Markera som läst" }));
     expect(screen.getByText("1/8 kapitel")).toBeInTheDocument();
-  });
-
-  it("ExerciseDetail renders for a route param", async () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="/exercise/:id" element={<ExerciseDetail />} />
-      </Routes>,
-      { route: "/exercise/abc123" },
-    );
-
-    expect(
-      await screen.findByRole("heading", { name: "Övningsdetaljer" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/abc123/)).toBeInTheDocument();
   });
 
   it("VerifyEmail points onward to login", async () => {

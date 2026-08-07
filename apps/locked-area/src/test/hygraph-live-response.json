@@ -1,0 +1,30 @@
+{
+  "exercises": [
+    {
+      "id": "cmqjox18b0wm807mg36yyuqj1",
+      "title": "Knäböj med stång",
+      "description": "Grundläggande styrkeövning som bygger styrka i ben, rumpa och core.",
+      "duration": 45,
+      "difficulty": "Medel",
+      "muscleGroups": "Quadriceps, Hamstrings, Gluteus, Core",
+      "videoUrl": null,
+      "image": null
+    }
+  ],
+  "exercise": {
+    "id": "cmqjox18b0wm807mg36yyuqj1",
+    "title": "Knäböj med stång",
+    "description": "Grundläggande styrkeövning som bygger styrka i ben, rumpa och core.",
+    "duration": 45,
+    "difficulty": "Medel",
+    "muscleGroups": "Quadriceps, Hamstrings, Gluteus, Core",
+    "videoUrl": null,
+    "image": null,
+    "steps": [
+      "Stå med fötterna axelbrett isär",
+      "Placera stången över axlarna",
+      "Sänk dig ner som om du sätter dig på en stol",
+      "Pressa dig upp genom att trycka ifrån med hälarna"
+    ]
+  }
+}
