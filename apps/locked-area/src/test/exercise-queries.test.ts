@@ -56,6 +56,25 @@ describe("query whitelist", () => {
       expect(query).not.toMatch(/\bmutation\b/);
     }
   });
+
+  it("reads exercises and nothing else", () => {
+    // Architectural boundary: Hygraph is the content source, Supabase is the
+    // identity source. They do not overlap.
+    //
+    // The Hygraph project still carries a legacy `Member` model from an earlier
+    // attempt at doing auth in the CMS - name, email, password, reset tokens.
+    // This app has never read it and must never start: passwords belong in
+    // Supabase Auth, not in a content API.
+    //
+    // Adding a query here that touches an identity model should fail loudly
+    // rather than quietly widen what the proxy can reach.
+    const forbidden = /\b(members?|users?|accounts?|passwords?)\b/i;
+
+    for (const [name, query] of Object.entries(QUERIES)) {
+      expect(name).not.toMatch(forbidden);
+      expect(query).not.toMatch(forbidden);
+    }
+  });
 });
 
 describe("variable whitelist", () => {

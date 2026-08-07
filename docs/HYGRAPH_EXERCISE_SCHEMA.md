@@ -23,8 +23,46 @@ public-site uses a different one, `cmq1xlnd2022t07w9jmsfkk5o`).
 | `videoUrl` | `String` | — | Renders a "Se instruktionsvideo" link. |
 | `image` | `Asset` | — | Card and detail header; falls back to a branded placeholder. |
 
-There are also `material` and `member` models in this project, currently unused
-by the app — relevant when the handbook and knowledge sections get wired up.
+## The boundary: Hygraph is content, Supabase is identity
+
+They do not overlap, and that is deliberate.
+
+The project also contains a **`Member` model** — `name`, `email`, `password`,
+`isVerified`, `isApproved`, `verificationToken`, `resetToken`,
+`resetTokenExpiry`. It is a leftover from an earlier attempt at doing
+authentication inside the CMS, before this project settled on Supabase Auth.
+
+**The app has never read it and must not start.** Authentication lives in
+Supabase: `auth.users` plus the `profiles` table and its row-level security
+(see `sql/`). A content API is not a credential store — it has no password
+hashing policy, no rate limiting, no session handling, and its access control
+is a permissions checkbox.
+
+Two things enforce this rather than leaving it to memory:
+
+- The edge function serves a **fixed whitelist of two queries**, neither of
+  which touches an identity model.
+- `src/test/exercise-queries.test.ts` fails if a query name or body ever
+  mentions `member`, `user`, `account` or `password`.
+
+### ⚠️ The legacy `Member` records should be deleted
+
+As of 2026-08-08 the model holds **5 records, all with a stored password
+value**, 2 of them also carrying reset or verification tokens. The stored
+passwords are 64 characters with no algorithm prefix — consistent with an
+unsalted SHA-256, which is unsuitable for passwords.
+
+Until the public Read permission was removed (same date), **all of it was
+readable with no credential at all**. Treat those 5 passwords as compromised,
+delete the model, and take a view on whether the exposure needs reporting.
+
+## `Material`
+
+There is also a `material` model — `title`, `description`, `fileType`, `size`,
+`file`. One published entry exists ("Introduktionsvideo") but its `file` asset
+is empty, so nothing is downloadable yet. Not wired to the app: a download card
+that leads nowhere is worse than the current placeholder. Attach a real asset
+first.
 
 ### ⚠️ `difficulty` is a free String, not an enumeration
 
