@@ -22,7 +22,11 @@ const ANON_KEY = env.get("SUPABASE_ANON_KEY")!;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": env.get("ALLOWED_ORIGIN") ?? "*",
-  "Access-Control-Allow-Headers": "authorization, content-type",
+  // supabase-js attaches x-client-info and apikey to every invoke(). Omitting
+  // them here fails the CORS preflight before the request is ever sent, which
+  // surfaces as an opaque "Failed to send a request to the Edge Function".
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
