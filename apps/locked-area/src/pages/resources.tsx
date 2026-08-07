@@ -69,7 +69,17 @@ const ResourceCard = ({
           className={linkClasses}
         >
           {linkText}
-          <ExternalLink className="w-4 h-4" />
+          {/* The icon follows the affordance, not every link: an external-link
+              glyph on "Ring 112" (a tel: link) promised a new tab that never
+              opened. Phone and mail links get their own matching icon. */}
+          {external ? (
+            <ExternalLink className="w-4 h-4" aria-hidden="true" />
+          ) : href.startsWith("tel:") ? (
+            <Phone className="w-4 h-4" aria-hidden="true" />
+          ) : href.startsWith("mailto:") ? (
+            <Mail className="w-4 h-4" aria-hidden="true" />
+          ) : null}
+          {external && <span className="sr-only">(öppnas i ny flik)</span>}
         </a>
       ) : (
         <span className="text-text-muted text-sm italic">{linkText}</span>
@@ -78,7 +88,7 @@ const ResourceCard = ({
   );
 };
 
-export const Resources = () => {
+export default function Resources() {
   const resources: ResourceCardProps[] = [
     {
       icon: AlertTriangle,
@@ -223,6 +233,4 @@ export const Resources = () => {
       />
     </div>
   );
-};
-
-export default Resources;
+}

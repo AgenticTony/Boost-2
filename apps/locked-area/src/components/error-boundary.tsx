@@ -23,8 +23,11 @@ export class ErrorBoundary extends Component<Props, State> {
     this.state = { hasError: false, retryKey: 0 };
   }
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true, retryKey: 0 };
+  // Returns only the error flag. Returning retryKey: 0 reset the counter on
+  // every error, so a second failure after a retry produced the same key as
+  // the first - and the remount this class exists to force never happened.
+  static getDerivedStateFromError(): Pick<State, "hasError"> {
+    return { hasError: true };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {

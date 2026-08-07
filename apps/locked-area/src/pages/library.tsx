@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Search,
   Clock,
@@ -30,7 +30,6 @@ export default function Library() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [showInfo, setShowInfo] = useState(true);
-  const navigate = useNavigate();
 
   const difficulties = ["all", "Lätt", "Medel", "Svår"];
 
@@ -43,10 +42,6 @@ export default function Library() {
       selectedDifficulty === "all" || ex.difficulty === selectedDifficulty;
     return matchesSearch && matchesDifficulty;
   });
-
-  const handleExerciseClick = (id: string) => {
-    navigate(`/exercise/${id}`);
-  };
 
   const guideSteps = [
     {
@@ -284,10 +279,16 @@ export default function Library() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredExercises.map((exercise: Exercise) => (
-                <div
+                // The card was a <div> with onClick wrapping a real <button>:
+                // unreachable by keyboard, invisible to screen readers as a
+                // control, and nested interactive content. It is now an inert
+                // container whose single link stretches over the whole card,
+                // so the click target is unchanged but there is exactly one
+                // focusable element per card.
+                <article
                   key={exercise.id}
-                  className="group bg-white rounded-card border border-border overflow-hidden hover:shadow-lg hover:border-brand-red/30 transition-all duration-300 cursor-pointer"
-                  onClick={() => handleExerciseClick(exercise.id)}
+                  aria-labelledby={`exercise-${exercise.id}-title`}
+                  className="group relative bg-card rounded-card border border-border overflow-hidden hover:shadow-lg hover:border-brand-red/30 transition-all duration-300 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-navy"
                 >
                   {/* Card Image Placeholder */}
                   <div className="relative h-48 bg-gradient-to-br from-brand-navy to-surface flex items-center justify-center overflow-hidden">
@@ -308,7 +309,10 @@ export default function Library() {
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-lg font-display font-bold text-text mb-2 group-hover:text-brand-red transition-colors">
+                    <h3
+                      id={`exercise-${exercise.id}-title`}
+                      className="text-lg font-display font-bold text-text mb-2 group-hover:text-brand-red transition-colors"
+                    >
                       {exercise.title}
                     </h3>
                     <p className="text-text-muted text-sm mb-4 line-clamp-2 leading-relaxed">
@@ -329,18 +333,22 @@ export default function Library() {
                       </div>
                     </div>
 
-                    <button
-                      className="w-full flex items-center justify-center gap-2 py-3 bg-brand-red text-white rounded-input font-semibold hover:bg-brand-red/90 transition-colors group-hover:shadow-lg"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleExerciseClick(exercise.id);
-                      }}
+                    {/* after:inset-0 stretches this link across the whole
+                        card, so the entire surface stays clickable without a
+                        second control competing for focus. */}
+                    <Link
+                      to={`/exercise/${exercise.id}`}
+                      aria-label={`Visa övning: ${exercise.title}`}
+                      className="w-full flex items-center justify-center gap-2 py-3 bg-brand-red text-white rounded-input font-semibold hover:bg-brand-red/90 transition-colors group-hover:shadow-lg after:absolute after:inset-0 after:content-['']"
                     >
                       Visa övning
-                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                      <ChevronRight
+                        className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                        aria-hidden="true"
+                      />
+                    </Link>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           </>
