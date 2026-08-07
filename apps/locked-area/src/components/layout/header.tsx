@@ -31,7 +31,7 @@ export function Header() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3">
           <img
-            src={import.meta.env.BASE_URL + "logo_boostbyfcr_dark.png"}
+            src="/images/logo_boostbyfcr_dark.png"
             alt="Boost by FC Rosengård"
             className="h-8 w-auto"
           />
