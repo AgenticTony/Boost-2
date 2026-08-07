@@ -53,6 +53,13 @@ export interface MockQueryCall {
   single: boolean;
 }
 
+export type MockFunctionHandler = (
+  name: string,
+  body: unknown,
+) =>
+  | { data: unknown; error: { message: string } | null }
+  | Promise<{ data: unknown; error: { message: string } | null }>;
+
 export type MockQueryHandler = (
   call: MockQueryCall,
 ) => MockQueryResult | Promise<MockQueryResult>;
@@ -155,6 +162,10 @@ function createControls() {
     ((event: MockAuthEvent, session: MockSession | null) => void) | null = null;
   let initialSession: MockSession | null = null;
   let queryHandler: MockQueryHandler = () => OK;
+  let functionHandler: MockFunctionHandler = () => ({
+    data: { ok: true },
+    error: null,
+  });
 
   const authResponses = {
     signInWithPassword: { error: null } as { error: MockAuthError | null },
@@ -197,6 +208,11 @@ function createControls() {
     from: vi.fn(
       (table: string) => new MockQueryBuilder(table, () => queryHandler),
     ),
+    functions: {
+      invoke: vi.fn(async (name: string, options?: { body?: unknown }) =>
+        functionHandler(name, options?.body),
+      ),
+    },
   };
 
   return {
@@ -217,6 +233,11 @@ function createControls() {
         );
       }
       authListener(event, session);
+    },
+
+    /** Replace the handler for `functions.invoke`. */
+    setFunctionHandler(handler: MockFunctionHandler) {
+      functionHandler = handler;
     },
 
     /** Replace the handler for every `.from(...)` chain. */
@@ -246,6 +267,7 @@ function createControls() {
       authListener = null;
       initialSession = null;
       queryHandler = () => OK;
+      functionHandler = () => ({ data: { ok: true }, error: null });
       authResponses.signInWithPassword = { error: null };
       authResponses.signUp = {
         data: { user: { id: "test-user" } },
@@ -262,6 +284,7 @@ function createControls() {
       client.auth.resetPasswordForEmail.mockClear();
       client.auth.updateUser.mockClear();
       client.from.mockClear();
+      client.functions.invoke.mockClear();
     },
   };
 }

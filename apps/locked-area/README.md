@@ -67,6 +67,48 @@ writable through the public API by anyone — a compromised admin session
 cannot mint more admins. The SQL Editor runs as the table owner and is
 unaffected by those grants.
 
+### Edge Function: `delete-user`
+
+The admin "Neka" action permanently deletes an auth user. That requires the
+**service-role key**, which bypasses row-level security completely and must
+never reach the browser — which is the entire reason this runs server-side
+rather than from the client.
+
+Deploy it:
+
+```bash
+supabase functions deploy delete-user --project-ref <your-project-ref>
+```
+
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are
+injected into Edge Functions automatically — you do **not** need to set them,
+and you must not add the service-role key to `.env`, to `.env.example`, or to
+anything carrying a `VITE_` prefix.
+
+Optionally restrict CORS to your deployed origin:
+
+```bash
+supabase secrets set ALLOWED_ORIGIN=https://your-locked-area-domain
+```
+
+**How it decides.** The function identifies the caller from their JWT, then
+re-reads that caller's `is_admin` **from the database**. It never trusts
+`is_admin` from the request body or a token claim — a client that can name a
+target can just as easily claim to be an admin. It then refuses:
+
+- callers who are not signed in, or not admins
+- deleting yourself
+- deleting another admin
+
+Those rules live in `supabase/functions/_shared/authorize-deletion.ts`, kept
+import-free so the same code is unit-tested by the Vite suite
+(`src/test/authorize-deletion.test.ts`). The function is Deno and cannot run
+under vitest, so the decision worth testing is deliberately separated from the
+plumbing around it.
+
+Removing the auth user also removes the profile row: `profiles.id` references
+`auth.users` with `on delete cascade`.
+
 ### Development
 
 ```bash
