@@ -19,6 +19,7 @@ import { InfoBanner } from "@/components/info-banner";
 import { Button } from "@/components/ui/button";
 import { GuideSection } from "@/components/guide-section";
 import { FutureFeatures } from "@/components/future-features";
+import { Seo } from "@/components/seo";
 
 interface TocItemProps {
   number: number;
@@ -208,6 +209,7 @@ export const HandbookReader = () => {
 
   return (
     <div className="min-h-screen bg-surface font-body">
+      <Seo title="Handbok" description="Metodhandbok för Boost-ledare." />
       {/* Progress Bar */}
       <div className="bg-surface-dark border-b border-white/10">
         <div className="container-page py-3">
@@ -254,7 +256,8 @@ export const HandbookReader = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1">
+        {/* Not <main>: App.tsx already provides the single main landmark. */}
+        <div className="flex-1">
           {/* Hero */}
           <section className="relative overflow-hidden border-b border-border">
             <div className="absolute inset-0 bg-gradient-to-br from-surface via-surface to-surface-dark opacity-50 pointer-events-none" />
@@ -409,7 +412,7 @@ export const HandbookReader = () => {
             subtitle="Handboks-läsaren kommer förbättras med fler verktyg för en bättre upplevelse."
             features={futureFeatures}
           />
-        </main>
+        </div>
       </div>
     </div>
   );

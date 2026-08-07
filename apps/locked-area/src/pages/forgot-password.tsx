@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
+import { Seo } from "@/components/seo";
 
 const schema = z.object({ email: emailSchema });
 type Values = z.infer<typeof schema>;
@@ -69,6 +70,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-6 font-body">
+      <Seo title="Glömt lösenord" />
       <div className="w-full max-w-md">
         <Card className="p-8 shadow-md">
           <h2 className="text-2xl font-display font-bold text-text text-center mb-2">

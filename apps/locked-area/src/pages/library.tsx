@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Search,
   Clock,
@@ -20,14 +20,16 @@ import { useExercises, type Exercise } from "@/hooks/use-exercises";
 import { GuideSection } from "@/components/guide-section";
 import { FutureFeatures } from "@/components/future-features";
 import { Spinner } from "@/components/ui/spinner";
+import { PageHero } from "@/components/layout/page-hero";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Seo } from "@/components/seo";
 
 export default function Library() {
   const { data: exercises, isLoading, error } = useExercises();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [showInfo, setShowInfo] = useState(true);
-  const navigate = useNavigate();
 
   const difficulties = ["all", "Lätt", "Medel", "Svår"];
 
@@ -40,10 +42,6 @@ export default function Library() {
       selectedDifficulty === "all" || ex.difficulty === selectedDifficulty;
     return matchesSearch && matchesDifficulty;
   });
-
-  const handleExerciseClick = (id: string) => {
-    navigate(`/exercise/${id}`);
-  };
 
   const guideSteps = [
     {
@@ -139,58 +137,38 @@ export default function Library() {
 
   return (
     <div className="min-h-screen bg-surface font-body">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
-          <div className="absolute top-10 left-1/4 w-72 h-72 bg-brand-red/10 rounded-full blur-[100px]"></div>
-          <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-brand-blue-light/10 rounded-full blur-[100px]"></div>
-        </div>
-
-        <div className="container-page relative py-16 md:py-24">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-brand-red/10 rounded-input flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-brand-red" />
-              </div>
-              <span className="text-brand-red text-sm font-semibold uppercase tracking-wider">
-                Övningsbibliotek
-              </span>
+      <Seo
+        title="Bibliotek"
+        description="Övningar och metodmaterial för Boost-ledare."
+      />
+      <PageHero
+        accent="red"
+        icon={BookOpen}
+        badge="Övningsbibliotek"
+        title={
+          <>
+            Ditt kompletta{" "}
+            <span className="text-brand-red">träningsbibliotek</span>
+          </>
+        }
+        subtitle="Utforska vårt bibliotek med professionellt utvecklade övningar för alla nivåer. Filtrera efter svårighetsgrad, sök efter muskelgrupper och hitta de perfekta övningarna för ditt träningsprogram."
+      >
+        <div className="flex flex-wrap gap-4">
+          {[
+            { icon: Layers, label: `${exercises.length} övningar` },
+            { icon: Award, label: "Alla nivåer" },
+            { icon: Zap, label: "Expertguidade" },
+          ].map(({ icon: StatIcon, label }) => (
+            <div
+              key={label}
+              className="flex items-center gap-2 bg-card rounded-input px-4 py-2 border border-border shadow-sm"
+            >
+              <StatIcon className="w-5 h-5 text-brand-red" aria-hidden="true" />
+              <span className="text-sm font-medium text-text">{label}</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-6 leading-tight text-text">
-              Ditt kompletta{" "}
-              <span className="text-brand-red">träningsbibliotek</span>
-            </h1>
-            <p className="text-lg text-text-muted mb-8 leading-relaxed">
-              Utforska vårt bibliotek med professionellt utvecklade övningar för
-              alla nivåer. Filtrera efter svårighetsgrad, sök efter
-              muskelgrupper och hitta de perfekta övningarna för ditt
-              träningsprogram.
-            </p>
-
-            {/* Stats */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
-                <Layers className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">
-                  {exercises.length} övningar
-                </span>
-              </div>
-              <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
-                <Award className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">
-                  Alla nivåer
-                </span>
-              </div>
-              <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
-                <Zap className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">
-                  Expertguidade
-                </span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
+      </PageHero>
 
       {/* Info Banner */}
       {showInfo && (
@@ -223,20 +201,22 @@ export default function Library() {
         </div>
       )}
 
-      {/* Search & Filter Section */}
-      <div className="sticky top-0 z-30 bg-white border-b border-border shadow-sm">
+      {/* Search & Filter Section.
+          top-16 rather than top-0: the header is also sticky at top-0 with a
+          higher z-index, so this bar slid underneath it and disappeared.
+          16 = the header's h-16. */}
+      <div className="sticky top-16 z-30 bg-card border-b border-border shadow-sm">
         <div className="container-page py-4">
           <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" />
-              <input
+            <div className="flex-1">
+              <Input
                 type="text"
+                icon={Search}
                 placeholder="Sök övningar, muskelgrupper..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Sök övningar"
-                className="w-full pl-10 pr-4 py-3 bg-white border border-border rounded-input focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy transition-all text-text placeholder:text-text-muted/60"
+                className="py-3"
               />
             </div>
 
@@ -299,10 +279,16 @@ export default function Library() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredExercises.map((exercise: Exercise) => (
-                <div
+                // The card was a <div> with onClick wrapping a real <button>:
+                // unreachable by keyboard, invisible to screen readers as a
+                // control, and nested interactive content. It is now an inert
+                // container whose single link stretches over the whole card,
+                // so the click target is unchanged but there is exactly one
+                // focusable element per card.
+                <article
                   key={exercise.id}
-                  className="group bg-white rounded-card border border-border overflow-hidden hover:shadow-lg hover:border-brand-red/30 transition-all duration-300 cursor-pointer"
-                  onClick={() => handleExerciseClick(exercise.id)}
+                  aria-labelledby={`exercise-${exercise.id}-title`}
+                  className="group relative bg-card rounded-card border border-border overflow-hidden hover:shadow-lg hover:border-brand-red/30 transition-all duration-300 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-navy"
                 >
                   {/* Card Image Placeholder */}
                   <div className="relative h-48 bg-gradient-to-br from-brand-navy to-surface flex items-center justify-center overflow-hidden">
@@ -323,7 +309,10 @@ export default function Library() {
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-lg font-display font-bold text-text mb-2 group-hover:text-brand-red transition-colors">
+                    <h3
+                      id={`exercise-${exercise.id}-title`}
+                      className="text-lg font-display font-bold text-text mb-2 group-hover:text-brand-red transition-colors"
+                    >
                       {exercise.title}
                     </h3>
                     <p className="text-text-muted text-sm mb-4 line-clamp-2 leading-relaxed">
@@ -344,18 +333,22 @@ export default function Library() {
                       </div>
                     </div>
 
-                    <button
-                      className="w-full flex items-center justify-center gap-2 py-3 bg-brand-red text-white rounded-input font-semibold hover:bg-brand-red/90 transition-colors group-hover:shadow-lg"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleExerciseClick(exercise.id);
-                      }}
+                    {/* after:inset-0 stretches this link across the whole
+                        card, so the entire surface stays clickable without a
+                        second control competing for focus. */}
+                    <Link
+                      to={`/exercise/${exercise.id}`}
+                      aria-label={`Visa övning: ${exercise.title}`}
+                      className="w-full flex items-center justify-center gap-2 py-3 bg-brand-red text-white rounded-input font-semibold hover:bg-brand-red/90 transition-colors group-hover:shadow-lg after:absolute after:inset-0 after:content-['']"
                     >
                       Visa övning
-                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                      <ChevronRight
+                        className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                        aria-hidden="true"
+                      />
+                    </Link>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           </>

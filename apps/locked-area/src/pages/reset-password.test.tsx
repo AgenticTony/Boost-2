@@ -7,7 +7,6 @@ import { renderWithProviders } from "@/test/test-utils";
 import { supabaseMock, makeSession, makeProfile } from "@/test/supabase-mock";
 import { STRONG_INPUT, WEAK_INPUT } from "@/test/fixtures";
 
-
 function renderReset() {
   return renderWithProviders(
     <Routes>
@@ -123,10 +122,7 @@ describe("ResetPassword — submission", () => {
 
       const password = await screen.findByLabelText("Nytt lösenord");
       await user.type(password, STRONG_INPUT);
-      await user.type(
-        screen.getByLabelText("Bekräfta lösenord"),
-        STRONG_INPUT,
-      );
+      await user.type(screen.getByLabelText("Bekräfta lösenord"), STRONG_INPUT);
       await user.click(
         screen.getByRole("button", { name: "Uppdatera lösenord" }),
       );

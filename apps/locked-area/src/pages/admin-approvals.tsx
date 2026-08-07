@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
+import { Seo } from "@/components/seo";
 
 interface PendingUser {
   id: string;
@@ -19,6 +20,7 @@ export default function AdminApprovals() {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
 
   const fetchPending = useCallback(async () => {
     setLoading(true);
@@ -48,13 +50,20 @@ export default function AdminApprovals() {
   }, []);
 
   const approveUser = async (id: string) => {
+    setActionError("");
+
     const { error } = await supabase
       .from("profiles")
       .update({ approved: true })
       .eq("id", id);
 
     if (error) {
-      alert("Kunde inte godkänna användare: " + error.message);
+      // Was a native alert(): unstyled, blocking, and it dumped Supabase's raw
+      // English message into an otherwise Swedish interface.
+      console.error("Approve failed:", error);
+      setActionError(
+        "Kunde inte godkänna användaren. Kontrollera din anslutning och försök igen.",
+      );
       return;
     }
 
@@ -113,10 +122,16 @@ export default function AdminApprovals() {
 
   return (
     <div className="min-h-screen bg-surface font-body">
+      <Seo title="Godkänn användare" description="Administrera nya konton." />
       <div className="container-page py-12">
         <h1 className="text-3xl font-display font-bold text-text mb-6">
           Godkänn nya användare
         </h1>
+        {actionError && (
+          <div className="mb-6">
+            <Alert variant="error">{actionError}</Alert>
+          </div>
+        )}
         {pendingUsers.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-text-muted leading-relaxed">

@@ -1,14 +1,18 @@
-import { Link } from "react-router-dom"
-import { Check } from "lucide-react"
+import { Link } from "react-router-dom";
+import { Check } from "lucide-react";
+import { Seo } from "@/components/seo";
 
 export default function VerifyEmail() {
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-6 font-body">
+      <Seo title="E-post verifierad" />
       <div className="bg-white rounded-card border border-border p-8 text-center max-w-md shadow-md">
         <div className="w-12 h-12 rounded-input bg-success/10 flex items-center justify-center mx-auto mb-4">
           <Check className="w-6 h-6 text-success" />
         </div>
-        <h2 className="text-xl font-display font-bold text-text mb-2">E-post verifierad!</h2>
+        <h2 className="text-xl font-display font-bold text-text mb-2">
+          E-post verifierad!
+        </h2>
         <p className="text-text-muted text-sm mb-6">
           Din e-post är verifierad! Du kan nu logga in.
         </p>
@@ -20,5 +24,5 @@ export default function VerifyEmail() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
