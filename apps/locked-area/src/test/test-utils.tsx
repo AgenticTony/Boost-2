@@ -7,6 +7,22 @@ import {
 import { MemoryRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/auth/auth-provider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+/**
+ * A fresh query client per render, with retries off.
+ *
+ * Sharing one client across tests leaks cached results between them, and the
+ * default retry turns an intended failure into a multi-second wait before the
+ * assertion can see it.
+ */
+function createTestQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, staleTime: 0, gcTime: 0 },
+    },
+  });
+}
 
 /**
  * Provider stack for component and page tests.
@@ -20,9 +36,11 @@ export function createWrapper(initialEntries: string[] = ["/"]) {
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <HelmetProvider>
-        <MemoryRouter initialEntries={initialEntries}>
-          <AuthProvider>{children}</AuthProvider>
-        </MemoryRouter>
+        <QueryClientProvider client={createTestQueryClient()}>
+          <MemoryRouter initialEntries={initialEntries}>
+            <AuthProvider>{children}</AuthProvider>
+          </MemoryRouter>
+        </QueryClientProvider>
       </HelmetProvider>
     );
   };

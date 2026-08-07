@@ -1,22 +1,19 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchExercises, fetchExerciseById } from "@/api/client";
 
-export interface Exercise {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  difficulty: string;
-  muscleGroups: string;
+export function useExercises() {
+  return useQuery({
+    queryKey: ["exercises"],
+    queryFn: fetchExercises,
+  });
 }
 
-/**
- * Placeholder data hook for exercises.
- * Returns an empty array until Hygraph content models are created.
- */
-export const useExercises = () => {
-  const [data] = useState<Exercise[]>([]);
-  const [isLoading] = useState(false);
-  const [error] = useState<Error | null>(null);
-
-  return { data, isLoading, error };
-};
+export function useExercise(id: string | undefined) {
+  return useQuery({
+    queryKey: ["exercise", id],
+    queryFn: () => fetchExerciseById(id!),
+    // Without an id there is nothing to ask for; skip the request rather than
+    // fetching `undefined` and letting the adapter deal with it.
+    enabled: Boolean(id),
+  });
+}

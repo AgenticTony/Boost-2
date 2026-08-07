@@ -74,14 +74,6 @@ export default function App() {
                   }
                 />
                 <Route
-                  path="/exercises"
-                  element={
-                    <ProtectedRoute>
-                      <ExerciseDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
                   path="/handbook"
                   element={
                     <ProtectedRoute>

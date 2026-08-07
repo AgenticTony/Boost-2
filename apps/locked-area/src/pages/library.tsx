@@ -16,7 +16,9 @@ import {
   Users,
   Star,
 } from "lucide-react";
-import { useExercises, type Exercise } from "@/hooks/use-exercises";
+import { useExercises } from "@/hooks/use-exercises";
+import { DIFFICULTIES, type Exercise } from "@/types/exercise";
+import { ContentError } from "@/api/adapter";
 import { GuideSection } from "@/components/guide-section";
 import { FutureFeatures } from "@/components/future-features";
 import { Spinner } from "@/components/ui/spinner";
@@ -26,18 +28,20 @@ import { cn } from "@/lib/utils";
 import { Seo } from "@/components/seo";
 
 export default function Library() {
-  const { data: exercises, isLoading, error } = useExercises();
+  const { data, isLoading, error } = useExercises();
+  const exercises = data ?? [];
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [showInfo, setShowInfo] = useState(true);
 
-  const difficulties = ["all", "Lätt", "Medel", "Svår"];
+  const difficulties = ["all", ...DIFFICULTIES];
 
+  const q = searchQuery.toLowerCase();
   const filteredExercises = exercises.filter((ex: Exercise) => {
     const matchesSearch =
-      ex.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ex.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ex.muscleGroups?.toLowerCase().includes(searchQuery.toLowerCase());
+      ex.title.toLowerCase().includes(q) ||
+      ex.description.toLowerCase().includes(q) ||
+      ex.muscleGroups.some((group) => group.toLowerCase().includes(q));
     const matchesDifficulty =
       selectedDifficulty === "all" || ex.difficulty === selectedDifficulty;
     return matchesSearch && matchesDifficulty;
@@ -118,16 +122,34 @@ export default function Library() {
   }
 
   if (error) {
+    // "Nobody has published anything yet" and "the fetch failed" look the same
+    // to a member otherwise, and only one of them is worth reporting to
+    // support. The edge function returns 503/not_configured until the Hygraph
+    // models exist and its secrets are set.
+    const notConfigured =
+      error instanceof ContentError && error.isNotConfigured;
+
     return (
       <div className="min-h-screen bg-surface">
         <div className="container-page pt-32">
-          <div className="bg-error/10 border border-error/20 rounded-card p-6 text-error text-center">
-            <Info className="w-12 h-12 mx-auto mb-4" />
+          <div
+            className={cn(
+              "rounded-card p-6 text-center border",
+              notConfigured
+                ? "bg-surface-dark/5 border-border"
+                : "bg-error/10 border-error/20 text-error",
+            )}
+          >
+            <Info className="w-12 h-12 mx-auto mb-4" aria-hidden="true" />
             <h3 className="text-lg font-display font-semibold mb-2">
-              Kunde inte ladda övningar
+              {notConfigured
+                ? "Inga övningar publicerade ännu"
+                : "Kunde inte ladda övningar"}
             </h3>
             <p className="text-text-muted">
-              Försök igen senare eller kontakta support.
+              {notConfigured
+                ? "Materialet läggs in inom kort. Titta gärna in igen senare."
+                : "Försök igen senare eller kontakta support."}
             </p>
           </div>
         </div>
@@ -322,13 +344,12 @@ export default function Library() {
                     <div className="flex items-center gap-4 mb-4">
                       <div className="flex items-center gap-1.5 text-sm text-text-muted">
                         <Clock className="w-4 h-4" />
-                        <span>{exercise.duration} min</span>
+                        <span>{exercise.durationMinutes} min</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-sm text-text-muted">
                         <Target className="w-4 h-4" />
                         <span>
-                          {exercise.muscleGroups?.split(",")[0] ||
-                            "Hela kroppen"}
+                          {exercise.muscleGroups[0] ?? "Hela kroppen"}
                         </span>
                       </div>
                     </div>

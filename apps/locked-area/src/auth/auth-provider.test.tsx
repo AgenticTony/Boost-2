@@ -257,7 +257,10 @@ describe("AuthProvider — loading watchdog", () => {
             <span data-testid="state">
               {profileError ?? (isLoading ? "loading" : "idle")}
             </span>
-            <button type="button" onClick={() => void login("a@b.se", STRONG_INPUT)}>
+            <button
+              type="button"
+              onClick={() => void login("a@b.se", STRONG_INPUT)}
+            >
               logga in
             </button>
           </>
