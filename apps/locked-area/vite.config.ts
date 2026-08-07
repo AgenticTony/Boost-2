@@ -37,5 +37,13 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     css: true,
+    // setup.ts mocks @/lib/supabase for every test, so these are never used to
+    // reach a real project. They exist so that a file importing the real module
+    // (an un-mocked integration test, say) fails on its assertions rather than
+    // on the env-var guard at module load.
+    env: {
+      VITE_SUPABASE_URL: "http://localhost:54321",
+      VITE_SUPABASE_ANON_KEY: "test-anon-key",
+    },
   },
 });

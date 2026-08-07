@@ -1,0 +1,8 @@
+# Members-only area. Nothing here should ever appear in search results.
+#
+# This is a belt-and-braces measure alongside the noindex meta tag in
+# index.html. robots.txt asks crawlers not to fetch; noindex tells the ones
+# that fetch anyway not to index. Neither is access control - the real gate is
+# Supabase auth plus row-level security.
+User-agent: *
+Disallow: /

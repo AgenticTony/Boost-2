@@ -1,96 +1,130 @@
-import { useState } from "react"
-import { useAuth } from "@/auth/use-auth"
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Check, X, BookOpen, UserCircle, BarChart3 } from "lucide-react"
-import { useNavigate, Link } from "react-router-dom"
+import { useState } from "react";
+import { useAuth } from "@/auth/use-auth";
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Check,
+  X,
+  BookOpen,
+  UserCircle,
+  BarChart3,
+} from "lucide-react";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 
-type Tab = 'login' | 'register'
+type Tab = "login" | "register";
 
 interface PasswordRequirement {
-  label: string
-  met: boolean
+  label: string;
+  met: boolean;
 }
 
 export default function Login() {
-  const navigate = useNavigate()
-  const { login, register } = useAuth()
-  const [activeTab, setActiveTab] = useState<Tab>('login')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const navigate = useNavigate();
+  const {
+    login,
+    register,
+    isAuthenticated,
+    isLoading: isSessionLoading,
+  } = useAuth();
+  const [activeTab, setActiveTab] = useState<Tab>("login");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // Login fields
-  const [loginEmail, setLoginEmail] = useState('')
-  const [loginPassword, setLoginPassword] = useState('')
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
   // Register fields
-  const [regName, setRegName] = useState('')
-  const [regEmail, setRegEmail] = useState('')
-  const [regPassword, setRegPassword] = useState('')
-  const [regConfirmPassword, setRegConfirmPassword] = useState('')
+  const [regName, setRegName] = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regConfirmPassword, setRegConfirmPassword] = useState("");
 
   const passwordRequirements: PasswordRequirement[] = [
-    { label: 'Minst 8 tecken', met: regPassword.length >= 8 },
-    { label: 'En stor bokstav', met: /[A-Z]/.test(regPassword) },
-    { label: 'En siffra', met: /[0-9]/.test(regPassword) },
-    { label: 'Ett specialtecken (!@#$%^&*)', met: /[!@#$%^&*(),.?":{}|<>]/.test(regPassword) },
-  ]
+    { label: "Minst 8 tecken", met: regPassword.length >= 8 },
+    { label: "En stor bokstav", met: /[A-Z]/.test(regPassword) },
+    { label: "En siffra", met: /[0-9]/.test(regPassword) },
+    {
+      label: "Ett specialtecken (!@#$%^&*)",
+      met: /[!@#$%^&*(),.?":{}|<>]/.test(regPassword),
+    },
+  ];
 
-  const strengthScore = passwordRequirements.filter((r) => r.met).length
-  const strengthLabel = ['Svag', 'Svag', 'Medel', 'Stark', 'Mycket stark'][strengthScore]
+  const strengthScore = passwordRequirements.filter((r) => r.met).length;
+  const strengthLabel = ["Svag", "Svag", "Medel", "Stark", "Mycket stark"][
+    strengthScore
+  ];
   const strengthColor = [
-    'bg-error',
-    'bg-error',
-    'bg-brand-gold',
-    'bg-brand-navy',
-    'bg-success',
-  ][strengthScore]
+    "bg-error",
+    "bg-error",
+    "bg-brand-gold",
+    "bg-brand-navy",
+    "bg-success",
+  ][strengthScore];
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-    const result = await login(loginEmail, loginPassword)
-    setIsLoading(false)
+    const result = await login(loginEmail, loginPassword);
+    setIsLoading(false);
 
     if (result.success) {
-      navigate('/')
+      // `login` has already put the provider into its loading state, so the
+      // guard on "/" renders a spinner until the profile lands rather than
+      // treating the in-flight fetch as "not signed in".
+      navigate("/", { replace: true });
     } else {
-      setError(result.error || 'Inloggning misslyckades')
+      setError(result.error || "Inloggning misslyckades");
     }
-  }
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setSuccess('')
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
     if (regPassword !== regConfirmPassword) {
-      setError('Lösenorden matchar inte')
-      return
+      setError("Lösenorden matchar inte");
+      return;
     }
 
     if (strengthScore < 4) {
-      setError('Lösenordet uppfyller inte alla krav')
-      return
+      setError("Lösenordet uppfyller inte alla krav");
+      return;
     }
 
-    setIsLoading(true)
-    const result = await register(regName, regEmail, regPassword)
-    setIsLoading(false)
+    setIsLoading(true);
+    const result = await register(regName, regEmail, regPassword);
+    setIsLoading(false);
 
     if (result.success) {
-      setSuccess('Konto skapat! Kolla din e-post för att verifiera ditt konto.')
-      setRegName('')
-      setRegEmail('')
-      setRegPassword('')
-      setRegConfirmPassword('')
-      setActiveTab('login')
+      setSuccess(
+        "Konto skapat! Kolla din e-post för att verifiera ditt konto.",
+      );
+      setRegName("");
+      setRegEmail("");
+      setRegPassword("");
+      setRegConfirmPassword("");
+      setActiveTab("login");
     } else {
-      setError(result.error || 'Registrering misslyckades')
+      setError(result.error || "Registrering misslyckades");
     }
+  };
+
+  // An authenticated visitor has no business on the login screen. Without this
+  // they could end up stranded here holding a live session, with the form
+  // offering to sign them in again.
+  if (isAuthenticated && !isSessionLoading) {
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -99,17 +133,27 @@ export default function Login() {
       <div className="hidden lg:flex lg:w-1/2 relative bg-surface-dark">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/deltagare_boostbyfcr_pa_trappa-scaled.jpg')" }}
+          style={{
+            backgroundImage:
+              "url('/images/deltagare_boostbyfcr_pa_trappa-scaled.jpg')",
+          }}
         >
           <div className="absolute inset-0 bg-brand-navy/80" />
         </div>
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white">
           <div>
-            <img src="/images/logo_boostbyfcr_dark.png" alt="Boost by FC Rosengård" className="h-10 mb-8" />
-            <p className="text-brand-gold text-sm font-medium mb-4 tracking-wider">✦ SEDAN 2003</p>
+            <img
+              src="/images/logo_boostbyfcr_dark.png"
+              alt="Boost by FC Rosengård"
+              className="h-10 mb-8"
+            />
+            <p className="text-brand-gold text-sm font-medium mb-4 tracking-wider">
+              ✦ SEDAN 2003
+            </p>
             <h1 className="text-4xl font-display font-bold mb-2 leading-tight">
-              Tillsammans öppnar<br />
+              Tillsammans öppnar
+              <br />
               <span className="text-brand-gold">vi vägar framåt</span>
             </h1>
             <p className="text-white/70 max-w-md mt-4 text-sm leading-relaxed">
@@ -125,7 +169,9 @@ export default function Login() {
               </div>
               <div>
                 <p className="font-medium text-sm">Övningar & Handbok</p>
-                <p className="text-xs text-white/60">Strukturerat metodmaterial</p>
+                <p className="text-xs text-white/60">
+                  Strukturerat metodmaterial
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -134,7 +180,9 @@ export default function Login() {
               </div>
               <div>
                 <p className="font-medium text-sm">Kunskapsmaterial</p>
-                <p className="text-xs text-white/60">För deltagare och handledare</p>
+                <p className="text-xs text-white/60">
+                  För deltagare och handledare
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -155,7 +203,9 @@ export default function Login() {
             </div>
             <div>
               <p className="text-2xl font-bold text-brand-gold">20+</p>
-              <p className="text-xs text-white/60 tracking-wider">ÅRS ERFARENHET</p>
+              <p className="text-xs text-white/60 tracking-wider">
+                ÅRS ERFARENHET
+              </p>
             </div>
             <div>
               <p className="text-2xl font-bold text-brand-gold">98%</p>
@@ -179,12 +229,12 @@ export default function Login() {
 
             {/* Title */}
             <h2 className="text-2xl font-display font-bold text-text text-center mb-2">
-              {activeTab === 'login' ? 'Metodmaterial' : 'Skapa konto'}
+              {activeTab === "login" ? "Metodmaterial" : "Skapa konto"}
             </h2>
             <p className="text-text-muted text-center text-sm mb-6">
-              {activeTab === 'login'
-                ? 'Logga in för att komma åt övningar, handbok och kunskapsmaterial'
-                : 'Fyll i dina uppgifter för att skapa ett konto'}
+              {activeTab === "login"
+                ? "Logga in för att komma åt övningar, handbok och kunskapsmaterial"
+                : "Fyll i dina uppgifter för att skapa ett konto"}
             </p>
 
             {/* Tabs */}
@@ -192,12 +242,16 @@ export default function Login() {
               <button
                 type="button"
                 role="tab"
-                aria-selected={activeTab === 'login'}
-                onClick={() => { setActiveTab('login'); setError(''); setSuccess('') }}
+                aria-selected={activeTab === "login"}
+                onClick={() => {
+                  setActiveTab("login");
+                  setError("");
+                  setSuccess("");
+                }}
                 className={`flex-1 py-3 text-sm font-medium transition-all ${
-                  activeTab === 'login'
-                    ? 'text-brand-red border-b-2 border-brand-red'
-                    : 'text-text-muted hover:text-text'
+                  activeTab === "login"
+                    ? "text-brand-red border-b-2 border-brand-red"
+                    : "text-text-muted hover:text-text"
                 }`}
               >
                 Logga in
@@ -205,12 +259,16 @@ export default function Login() {
               <button
                 type="button"
                 role="tab"
-                aria-selected={activeTab === 'register'}
-                onClick={() => { setActiveTab('register'); setError(''); setSuccess('') }}
+                aria-selected={activeTab === "register"}
+                onClick={() => {
+                  setActiveTab("register");
+                  setError("");
+                  setSuccess("");
+                }}
                 className={`flex-1 py-3 text-sm font-medium transition-all ${
-                  activeTab === 'register'
-                    ? 'text-brand-red border-b-2 border-brand-red'
-                    : 'text-text-muted hover:text-text'
+                  activeTab === "register"
+                    ? "text-brand-red border-b-2 border-brand-red"
+                    : "text-text-muted hover:text-text"
                 }`}
               >
                 Skapa konto
@@ -219,23 +277,32 @@ export default function Login() {
 
             {/* Alerts */}
             {error && (
-              <div role="alert" className="mb-4 p-3 rounded-input bg-error/10 border border-error/20 text-error text-sm flex items-center gap-2">
+              <div
+                role="alert"
+                className="mb-4 p-3 rounded-input bg-error/10 border border-error/20 text-error text-sm flex items-center gap-2"
+              >
                 <X className="w-4 h-4 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
             {success && (
-              <div role="alert" className="mb-4 p-3 rounded-input bg-success/10 border border-success/20 text-success text-sm flex items-center gap-2">
+              <div
+                role="alert"
+                className="mb-4 p-3 rounded-input bg-success/10 border border-success/20 text-success text-sm flex items-center gap-2"
+              >
                 <Check className="w-4 h-4 flex-shrink-0" />
                 <span>{success}</span>
               </div>
             )}
 
             {/* Login Form */}
-            {activeTab === 'login' && (
+            {activeTab === "login" && (
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <label htmlFor="login-email" className="block text-sm font-medium text-text mb-1.5">
+                  <label
+                    htmlFor="login-email"
+                    className="block text-sm font-medium text-text mb-1.5"
+                  >
                     E-post
                   </label>
                   <div className="relative">
@@ -254,14 +321,17 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <label htmlFor="login-password" className="block text-sm font-medium text-text mb-1.5">
+                  <label
+                    htmlFor="login-password"
+                    className="block text-sm font-medium text-text mb-1.5"
+                  >
                     Lösenord
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
                     <input
                       id="login-password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
@@ -272,11 +342,17 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? 'Dölj lösenord' : 'Visa lösenord'}
+                      aria-label={
+                        showPassword ? "Dölj lösenord" : "Visa lösenord"
+                      }
                       aria-pressed={showPassword}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -306,10 +382,10 @@ export default function Login() {
                 </button>
 
                 <p className="text-center text-sm text-text-muted">
-                  Har du inget konto?{' '}
+                  Har du inget konto?{" "}
                   <button
                     type="button"
-                    onClick={() => setActiveTab('register')}
+                    onClick={() => setActiveTab("register")}
                     className="text-brand-red hover:text-brand-red/80 font-medium"
                   >
                     Skapa ett här
@@ -319,10 +395,13 @@ export default function Login() {
             )}
 
             {/* Register Form */}
-            {activeTab === 'register' && (
+            {activeTab === "register" && (
               <form onSubmit={handleRegister} className="space-y-4">
                 <div>
-                  <label htmlFor="reg-name" className="block text-sm font-medium text-text mb-1.5">
+                  <label
+                    htmlFor="reg-name"
+                    className="block text-sm font-medium text-text mb-1.5"
+                  >
                     Namn
                   </label>
                   <div className="relative">
@@ -341,7 +420,10 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <label htmlFor="reg-email" className="block text-sm font-medium text-text mb-1.5">
+                  <label
+                    htmlFor="reg-email"
+                    className="block text-sm font-medium text-text mb-1.5"
+                  >
                     E-post
                   </label>
                   <div className="relative">
@@ -360,14 +442,17 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <label htmlFor="reg-password" className="block text-sm font-medium text-text mb-1.5">
+                  <label
+                    htmlFor="reg-password"
+                    className="block text-sm font-medium text-text mb-1.5"
+                  >
                     Lösenord
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
                     <input
                       id="reg-password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
@@ -378,11 +463,17 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? 'Dölj lösenord' : 'Visa lösenord'}
+                      aria-label={
+                        showPassword ? "Dölj lösenord" : "Visa lösenord"
+                      }
                       aria-pressed={showPassword}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
 
@@ -396,17 +487,26 @@ export default function Login() {
                             style={{ width: `${(strengthScore / 4) * 100}%` }}
                           />
                         </div>
-                        <span className="text-xs text-text-muted w-20 text-right">{strengthLabel}</span>
+                        <span className="text-xs text-text-muted w-20 text-right">
+                          {strengthLabel}
+                        </span>
                       </div>
                       <ul className="space-y-1">
                         {passwordRequirements.map((req) => (
-                          <li key={req.label} className="flex items-center gap-1.5 text-xs">
+                          <li
+                            key={req.label}
+                            className="flex items-center gap-1.5 text-xs"
+                          >
                             {req.met ? (
                               <Check className="w-3 h-3 text-success" />
                             ) : (
                               <X className="w-3 h-3 text-text-muted" />
                             )}
-                            <span className={req.met ? 'text-success' : 'text-text-muted'}>
+                            <span
+                              className={
+                                req.met ? "text-success" : "text-text-muted"
+                              }
+                            >
                               {req.label}
                             </span>
                           </li>
@@ -417,14 +517,17 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <label htmlFor="reg-confirm" className="block text-sm font-medium text-text mb-1.5">
+                  <label
+                    htmlFor="reg-confirm"
+                    className="block text-sm font-medium text-text mb-1.5"
+                  >
                     Bekräfta lösenord
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
                     <input
                       id="reg-confirm"
-                      type={showConfirmPassword ? 'text' : 'password'}
+                      type={showConfirmPassword ? "text" : "password"}
                       autoComplete="new-password"
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
@@ -434,16 +537,26 @@ export default function Login() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label={showConfirmPassword ? 'Dölj lösenord' : 'Visa lösenord'}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={
+                        showConfirmPassword ? "Dölj lösenord" : "Visa lösenord"
+                      }
                       aria-pressed={showConfirmPassword}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
                     >
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                   {regConfirmPassword && regPassword !== regConfirmPassword && (
-                    <p className="mt-1 text-xs text-error">Lösenorden matchar inte</p>
+                    <p className="mt-1 text-xs text-error">
+                      Lösenorden matchar inte
+                    </p>
                   )}
                 </div>
 
@@ -463,10 +576,10 @@ export default function Login() {
                 </button>
 
                 <p className="text-center text-sm text-text-muted">
-                  Har du redan ett konto?{' '}
+                  Har du redan ett konto?{" "}
                   <button
                     type="button"
-                    onClick={() => setActiveTab('login')}
+                    onClick={() => setActiveTab("login")}
                     className="text-brand-red hover:text-brand-red/80 font-medium"
                   >
                     Logga in
@@ -498,5 +611,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }
