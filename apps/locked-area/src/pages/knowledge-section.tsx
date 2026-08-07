@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { PageLayout } from "@/components/layout/page-layout";
+import { Input } from "@/components/ui/input";
 import { SectionDivider } from "@/components/section-divider";
 import { InfoBanner } from "@/components/info-banner";
 import { GuideSection } from "@/components/guide-section";
@@ -33,7 +34,15 @@ interface ArticleCardProps extends Article {
 }
 
 // ── Article card component ──────────────────────────
-const ArticleCard = ({ title, description, category, readTime, views, rating, tags }: ArticleCardProps) => (
+const ArticleCard = ({
+  title,
+  description,
+  category,
+  readTime,
+  views,
+  rating,
+  tags,
+}: ArticleCardProps) => (
   <article className="bg-white border border-border rounded-card p-6 hover:border-brand-red/30 transition-all duration-300 shadow-sm group cursor-pointer flex flex-col">
     <div className="flex items-start justify-between mb-4">
       <div className="w-12 h-12 bg-brand-red/10 rounded-input flex items-center justify-center">
@@ -84,73 +93,80 @@ const ArticleCard = ({ title, description, category, readTime, views, rating, ta
 );
 
 export const KnowledgeSection = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('Alla');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("Alla");
 
   const articles: Article[] = [
     {
-      title: 'Mental Träning för Unga Idrottare',
+      title: "Mental Träning för Unga Idrottare",
       description:
-        'Lär dig tekniker för att bygga mental styrka, hantera prestationsångest och utveckla ett vinnande mindset hos unga fotbollsspelare.',
-      category: 'Mental Hälsa',
-      readTime: '8 min',
-      views: '1.2k',
-      rating: '4.9',
-      tags: ['Mental Styrka', 'Prestation', 'Ungdom'],
+        "Lär dig tekniker för att bygga mental styrka, hantera prestationsångest och utveckla ett vinnande mindset hos unga fotbollsspelare.",
+      category: "Mental Hälsa",
+      readTime: "8 min",
+      views: "1.2k",
+      rating: "4.9",
+      tags: ["Mental Styrka", "Prestation", "Ungdom"],
     },
     {
-      title: 'Kost & Näring för Optimal Prestation',
+      title: "Kost & Näring för Optimal Prestation",
       description:
-        'En guide till rätt kost för unga idrottare. Vad ska de äta före, under och efter träning för bästa resultat och återhämtning?',
-      category: 'Kost & Hälsa',
-      readTime: '12 min',
-      views: '890',
-      rating: '4.7',
-      tags: ['Kost', 'Näring', 'Återhämtning'],
+        "En guide till rätt kost för unga idrottare. Vad ska de äta före, under och efter träning för bästa resultat och återhämtning?",
+      category: "Kost & Hälsa",
+      readTime: "12 min",
+      views: "890",
+      rating: "4.7",
+      tags: ["Kost", "Näring", "Återhämtning"],
     },
     {
-      title: 'Skadeförebyggande Träning',
+      title: "Skadeförebyggande Träning",
       description:
-        'Viktiga övningar och rutiner för att minimera skaderisker. Fokus på uppvärmning, stretchning och styrketräning för unga spelare.',
-      category: 'Fysisk Träning',
-      readTime: '10 min',
-      views: '650',
-      rating: '4.8',
-      tags: ['Skador', 'Förebyggande', 'Styrka'],
+        "Viktiga övningar och rutiner för att minimera skaderisker. Fokus på uppvärmning, stretchning och styrketräning för unga spelare.",
+      category: "Fysisk Träning",
+      readTime: "10 min",
+      views: "650",
+      rating: "4.8",
+      tags: ["Skador", "Förebyggande", "Styrka"],
     },
     {
-      title: 'Lagbygge och Team Dynamics',
+      title: "Lagbygge och Team Dynamics",
       description:
-        'Strategier för att skapa ett starkt lag, hantera konflikter och bygga en positiv lagkultur där alla känner sig inkluderade.',
-      category: 'Ledarskap',
-      readTime: '15 min',
-      views: '430',
-      rating: '4.6',
-      tags: ['Team', 'Kommunikation', 'Inkludering'],
+        "Strategier för att skapa ett starkt lag, hantera konflikter och bygga en positiv lagkultur där alla känner sig inkluderade.",
+      category: "Ledarskap",
+      readTime: "15 min",
+      views: "430",
+      rating: "4.6",
+      tags: ["Team", "Kommunikation", "Inkludering"],
     },
     {
-      title: 'Föräldraengagemang i Föreningen',
+      title: "Föräldraengagemang i Föreningen",
       description:
-        'Så här involverar du föräldrar på ett konstruktivt sätt. Tips för kommunikation, förväntningshantering och samarbete.',
-      category: 'Ledarskap',
-      readTime: '7 min',
-      views: '320',
-      rating: '4.5',
-      tags: ['Föräldrar', 'Engagemang', 'Kommunikation'],
+        "Så här involverar du föräldrar på ett konstruktivt sätt. Tips för kommunikation, förväntningshantering och samarbete.",
+      category: "Ledarskap",
+      readTime: "7 min",
+      views: "320",
+      rating: "4.5",
+      tags: ["Föräldrar", "Engagemang", "Kommunikation"],
     },
     {
-      title: 'Grundläggande Taktik för U-lag',
+      title: "Grundläggande Taktik för U-lag",
       description:
-        'En introduktion till fotbollstaktik anpassad för unga spelare. Formationer, presspel och övergångar förklarat enkelt.',
-      category: 'Taktik',
-      readTime: '11 min',
-      views: '780',
-      rating: '4.8',
-      tags: ['Taktik', 'Formationer', 'Grundläggande'],
+        "En introduktion till fotbollstaktik anpassad för unga spelare. Formationer, presspel och övergångar förklarat enkelt.",
+      category: "Taktik",
+      readTime: "11 min",
+      views: "780",
+      rating: "4.8",
+      tags: ["Taktik", "Formationer", "Grundläggande"],
     },
   ];
 
-  const categories = ['Alla', 'Mental Hälsa', 'Kost & Hälsa', 'Fysisk Träning', 'Ledarskap', 'Taktik'];
+  const categories = [
+    "Alla",
+    "Mental Hälsa",
+    "Kost & Hälsa",
+    "Fysisk Träning",
+    "Ledarskap",
+    "Taktik",
+  ];
 
   const filteredArticles = articles.filter((article) => {
     const q = searchQuery.toLowerCase();
@@ -158,69 +174,80 @@ export const KnowledgeSection = () => {
       article.title.toLowerCase().includes(q) ||
       article.description.toLowerCase().includes(q) ||
       article.tags.some((tag) => tag.toLowerCase().includes(q));
-    const matchesCategory = categoryFilter === 'Alla' || article.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === "Alla" || article.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
   const guideSteps = [
     {
-      title: 'Sök och filtrera artiklar',
+      title: "Sök och filtrera artiklar",
       description:
-        'Använd sökfältet för att hitta specifika ämnen eller nyckelord. Filtrera efter kategori för att fokusera på områden som intresserar dig mest.',
+        "Använd sökfältet för att hitta specifika ämnen eller nyckelord. Filtrera efter kategori för att fokusera på områden som intresserar dig mest.",
     },
     {
-      title: 'Läs och lär',
+      title: "Läs och lär",
       description:
-        'Klicka på en artikel för att läsa hela innehållet. Varje artikel är skriven av experter och innehåller praktiska tips du kan applicera direkt.',
+        "Klicka på en artikel för att läsa hela innehållet. Varje artikel är skriven av experter och innehåller praktiska tips du kan applicera direkt.",
     },
     {
-      title: 'Spara för senare',
+      title: "Spara för senare",
       description:
-        'Markera artiklar som favoriter för att enkelt hitta tillbaka till dem. Dina sparade artiklar synkas över alla dina enheter.',
+        "Markera artiklar som favoriter för att enkelt hitta tillbaka till dem. Dina sparade artiklar synkas över alla dina enheter.",
     },
     {
-      title: 'Dela med kollegor',
+      title: "Dela med kollegor",
       description:
-        'Dela intressanta artiklar med andra ledare i ditt nätverk. Tillsammans växer vi som förening och tränare.',
+        "Dela intressanta artiklar med andra ledare i ditt nätverk. Tillsammans växer vi som förening och tränare.",
     },
   ];
 
-  const futureFeatures: { icon: LucideIcon; title: string; description: string; status: string }[] = [
+  const futureFeatures: {
+    icon: LucideIcon;
+    title: string;
+    description: string;
+    status: string;
+  }[] = [
     {
       icon: Search,
-      title: 'Avancerad Sökning',
-      description: 'Sök i artikeltext, filter på författare, datum och läsningstid.',
-      status: 'Kommer Q3 2026',
+      title: "Avancerad Sökning",
+      description:
+        "Sök i artikeltext, filter på författare, datum och läsningstid.",
+      status: "Kommer Q3 2026",
     },
     {
       icon: Star,
-      title: 'Favoriter & Samlingar',
-      description: 'Skapa egna samlingar av artiklar och spara för framtida referens.',
-      status: 'Kommer Q3 2026',
+      title: "Favoriter & Samlingar",
+      description:
+        "Skapa egna samlingar av artiklar och spara för framtida referens.",
+      status: "Kommer Q3 2026",
     },
     {
       icon: BookOpen,
-      title: 'Ljudversioner',
-      description: 'Lyssna på artiklar som poddar under träning eller i bilen.',
-      status: 'Kommer Q4 2026',
+      title: "Ljudversioner",
+      description: "Lyssna på artiklar som poddar under träning eller i bilen.",
+      status: "Kommer Q4 2026",
     },
     {
       icon: Filter,
-      title: 'Personliga Rekommendationer',
-      description: 'Få artiklar rekommenderade baserat på dina intressen och läsvanor.',
-      status: 'Kommer Q4 2026',
+      title: "Personliga Rekommendationer",
+      description:
+        "Få artiklar rekommenderade baserat på dina intressen och läsvanor.",
+      status: "Kommer Q4 2026",
     },
     {
       icon: Lightbulb,
-      title: 'Quiz & Kunskapstester',
-      description: 'Testa dina kunskaper med interaktiva quiz efter varje artikel.',
-      status: 'Kommer 2027',
+      title: "Quiz & Kunskapstester",
+      description:
+        "Testa dina kunskaper med interaktiva quiz efter varje artikel.",
+      status: "Kommer 2027",
     },
     {
       icon: Tag,
-      title: 'Expertkommentarer',
-      description: 'Läs kommentarer och tillägg från experter direkt i artiklarna.',
-      status: 'Kommer 2027',
+      title: "Expertkommentarer",
+      description:
+        "Läs kommentarer och tillägg från experter direkt i artiklarna.",
+      status: "Kommer 2027",
     },
   ];
 
@@ -236,15 +263,15 @@ export const KnowledgeSection = () => {
         <SectionDivider label="Utforska Artiklar" />
 
         <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" />
-            <input
+          <div className="flex-1">
+            <Input
               type="text"
+              icon={Search}
               placeholder="Sök artiklar, ämnen, nyckelord..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Sök artiklar"
-              className="w-full pl-12 pr-4 py-3 bg-white border border-border rounded-input text-text placeholder:text-text-muted/60 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy transition-colors"
+              className="py-3"
             />
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -256,8 +283,8 @@ export const KnowledgeSection = () => {
                 aria-pressed={categoryFilter === cat}
                 className={`px-4 py-3 rounded-input text-sm font-medium transition-all ${
                   categoryFilter === cat
-                    ? 'bg-brand-navy text-white'
-                    : 'bg-white text-text-muted border border-border hover:text-text'
+                    ? "bg-brand-navy text-white"
+                    : "bg-white text-text-muted border border-border hover:text-text"
                 }`}
               >
                 {cat}
@@ -269,9 +296,17 @@ export const KnowledgeSection = () => {
         {/* Results Count */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-text-muted text-sm">
-            Visar <span className="text-text font-semibold">{filteredArticles.length}</span> artiklar
-            {categoryFilter !== 'Alla' && (
-              <span> — Kategori: <span className="text-brand-navy">{categoryFilter}</span></span>
+            Visar{" "}
+            <span className="text-text font-semibold">
+              {filteredArticles.length}
+            </span>{" "}
+            artiklar
+            {categoryFilter !== "Alla" && (
+              <span>
+                {" "}
+                — Kategori:{" "}
+                <span className="text-brand-navy">{categoryFilter}</span>
+              </span>
             )}
           </p>
           <div className="flex items-center gap-2 text-text-muted text-sm">
@@ -291,7 +326,9 @@ export const KnowledgeSection = () => {
           <div className="text-center py-16">
             <BookOpen className="w-12 h-12 text-text-muted mx-auto mb-4" />
             <p className="text-text font-medium mb-2">Inga artiklar hittades</p>
-            <p className="text-text-muted text-sm">Prova att ändra din sökning eller filter</p>
+            <p className="text-text-muted text-sm">
+              Prova att ändra din sökning eller filter
+            </p>
           </div>
         )}
 

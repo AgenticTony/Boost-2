@@ -22,6 +22,15 @@ export interface AuthContextValue {
    * first redirects a signed-in member to the login screen with no explanation.
    */
   profileError: string | null;
+  /**
+   * Whether a Supabase session exists at all, independent of whether its
+   * profile row loaded or the account is approved.
+   *
+   * `isAuthenticated` is not a substitute: a password-recovery link produces a
+   * real session for someone whose profile may not be readable yet, and
+   * /reset-password has to tell that apart from an expired link.
+   */
+  hasSession: boolean;
   login: (
     email: string,
     password: string,
@@ -33,6 +42,10 @@ export interface AuthContextValue {
   ) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (
     email: string,
+  ) => Promise<{ success: boolean; error?: string }>;
+  /** Set a new password for the session established by a recovery link. */
+  updatePassword: (
+    password: string,
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }

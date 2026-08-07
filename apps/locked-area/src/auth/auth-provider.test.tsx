@@ -6,6 +6,7 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { AUTH_TIMEOUT_MS } from "@/auth/auth-provider";
 import { useAuth } from "@/auth/use-auth";
 import { renderWithProviders } from "@/test/test-utils";
+import { STRONG_INPUT } from "@/test/fixtures";
 import {
   supabaseMock,
   makeSession,
@@ -24,7 +25,7 @@ function LoginProbe() {
     <button
       type="button"
       onClick={async () => {
-        const result = await login("a@b.se", "hunter2");
+        const result = await login("a@b.se", STRONG_INPUT);
         if (result.success) navigate("/", { replace: true });
       }}
     >
@@ -175,7 +176,7 @@ describe("AuthProvider — login", () => {
         <button
           type="button"
           onClick={async () => {
-            const r = await login("a@b.se", "wrong");
+            const r = await login("a@b.se", STRONG_INPUT);
             if (!r.success) document.title = r.error ?? "";
           }}
         >
@@ -256,7 +257,7 @@ describe("AuthProvider — loading watchdog", () => {
             <span data-testid="state">
               {profileError ?? (isLoading ? "loading" : "idle")}
             </span>
-            <button type="button" onClick={() => void login("a@b.se", "pw")}>
+            <button type="button" onClick={() => void login("a@b.se", STRONG_INPUT)}>
               logga in
             </button>
           </>
