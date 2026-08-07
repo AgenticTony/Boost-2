@@ -13,6 +13,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
+import { Seo } from "@/components/seo";
 
 const REDIRECT_DELAY_MS = 3000;
 
@@ -133,6 +134,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-6 font-body">
+      <Seo title="Nytt lösenord" />
       <div className="w-full max-w-md">
         <Card className="p-8 shadow-md">
           <h2 className="text-2xl font-display font-bold text-text text-center mb-2">

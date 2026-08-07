@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  STRONG_INPUT,
-  TOO_SHORT_INPUT,
-} from "@/test/fixtures";
+import { STRONG_INPUT, TOO_SHORT_INPUT } from "@/test/fixtures";
 import {
   evaluatePassword,
   passwordSchema,

@@ -20,7 +20,10 @@ import { useExercises, type Exercise } from "@/hooks/use-exercises";
 import { GuideSection } from "@/components/guide-section";
 import { FutureFeatures } from "@/components/future-features";
 import { Spinner } from "@/components/ui/spinner";
+import { PageHero } from "@/components/layout/page-hero";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Seo } from "@/components/seo";
 
 export default function Library() {
   const { data: exercises, isLoading, error } = useExercises();
@@ -139,58 +142,38 @@ export default function Library() {
 
   return (
     <div className="min-h-screen bg-surface font-body">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
-          <div className="absolute top-10 left-1/4 w-72 h-72 bg-brand-red/10 rounded-full blur-[100px]"></div>
-          <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-brand-blue-light/10 rounded-full blur-[100px]"></div>
-        </div>
-
-        <div className="container-page relative py-16 md:py-24">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-brand-red/10 rounded-input flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-brand-red" />
-              </div>
-              <span className="text-brand-red text-sm font-semibold uppercase tracking-wider">
-                Övningsbibliotek
-              </span>
+      <Seo
+        title="Bibliotek"
+        description="Övningar och metodmaterial för Boost-ledare."
+      />
+      <PageHero
+        accent="red"
+        icon={BookOpen}
+        badge="Övningsbibliotek"
+        title={
+          <>
+            Ditt kompletta{" "}
+            <span className="text-brand-red">träningsbibliotek</span>
+          </>
+        }
+        subtitle="Utforska vårt bibliotek med professionellt utvecklade övningar för alla nivåer. Filtrera efter svårighetsgrad, sök efter muskelgrupper och hitta de perfekta övningarna för ditt träningsprogram."
+      >
+        <div className="flex flex-wrap gap-4">
+          {[
+            { icon: Layers, label: `${exercises.length} övningar` },
+            { icon: Award, label: "Alla nivåer" },
+            { icon: Zap, label: "Expertguidade" },
+          ].map(({ icon: StatIcon, label }) => (
+            <div
+              key={label}
+              className="flex items-center gap-2 bg-card rounded-input px-4 py-2 border border-border shadow-sm"
+            >
+              <StatIcon className="w-5 h-5 text-brand-red" aria-hidden="true" />
+              <span className="text-sm font-medium text-text">{label}</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-6 leading-tight text-text">
-              Ditt kompletta{" "}
-              <span className="text-brand-red">träningsbibliotek</span>
-            </h1>
-            <p className="text-lg text-text-muted mb-8 leading-relaxed">
-              Utforska vårt bibliotek med professionellt utvecklade övningar för
-              alla nivåer. Filtrera efter svårighetsgrad, sök efter
-              muskelgrupper och hitta de perfekta övningarna för ditt
-              träningsprogram.
-            </p>
-
-            {/* Stats */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
-                <Layers className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">
-                  {exercises.length} övningar
-                </span>
-              </div>
-              <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
-                <Award className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">
-                  Alla nivåer
-                </span>
-              </div>
-              <div className="flex items-center gap-2 bg-white rounded-input px-4 py-2 border border-border shadow-sm">
-                <Zap className="w-5 h-5 text-brand-red" />
-                <span className="text-sm font-medium text-text">
-                  Expertguidade
-                </span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
+      </PageHero>
 
       {/* Info Banner */}
       {showInfo && (
@@ -223,20 +206,22 @@ export default function Library() {
         </div>
       )}
 
-      {/* Search & Filter Section */}
-      <div className="sticky top-0 z-30 bg-white border-b border-border shadow-sm">
+      {/* Search & Filter Section.
+          top-16 rather than top-0: the header is also sticky at top-0 with a
+          higher z-index, so this bar slid underneath it and disappeared.
+          16 = the header's h-16. */}
+      <div className="sticky top-16 z-30 bg-card border-b border-border shadow-sm">
         <div className="container-page py-4">
           <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted pointer-events-none" />
-              <input
+            <div className="flex-1">
+              <Input
                 type="text"
+                icon={Search}
                 placeholder="Sök övningar, muskelgrupper..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Sök övningar"
-                className="w-full pl-10 pr-4 py-3 bg-white border border-border rounded-input focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy transition-all text-text placeholder:text-text-muted/60"
+                className="py-3"
               />
             </div>
 

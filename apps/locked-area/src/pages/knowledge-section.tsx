@@ -11,12 +11,13 @@ import {
   Filter,
   type LucideIcon,
 } from "lucide-react";
-import { PageLayout } from "@/components/layout/page-layout";
+import { PageHero } from "@/components/layout/page-hero";
 import { Input } from "@/components/ui/input";
 import { SectionDivider } from "@/components/section-divider";
 import { InfoBanner } from "@/components/info-banner";
 import { GuideSection } from "@/components/guide-section";
 import { FutureFeatures } from "@/components/future-features";
+import { Seo } from "@/components/seo";
 
 // ── Types ─────────────────────────────────────────────────
 interface Article {
@@ -252,12 +253,17 @@ export const KnowledgeSection = () => {
   ];
 
   return (
-    <PageLayout
-      title="Kunskapsbanken"
-      subtitle="Utforska vår samling av artiklar, guider och expertinnehåll inom träning, ledarskap, mental hälsa och mer. Allt skapat för att hjälpa dig bli en ännu bättre ledare."
-      badge="Lärande & Utveckling"
-      heroIcon={Lightbulb}
-    >
+    <div className="min-h-screen bg-surface">
+      <Seo
+        title="Kunskapsbanken"
+        description="Artiklar och guider för ledare."
+      />
+      <PageHero
+        title="Kunskapsbanken"
+        subtitle="Utforska vår samling av artiklar, guider och expertinnehåll inom träning, ledarskap, mental hälsa och mer. Allt skapat för att hjälpa dig bli en ännu bättre ledare."
+        badge="Lärande & Utveckling"
+        icon={Lightbulb}
+      />
       {/* Search & Filters */}
       <section className="container-page py-12">
         <SectionDivider label="Utforska Artiklar" />
@@ -354,7 +360,7 @@ export const KnowledgeSection = () => {
         subtitle="Kunskapsbanken kommer växa med fler verktyg för ditt kontinuerliga lärande."
         features={futureFeatures}
       />
-    </PageLayout>
+    </div>
   );
 };
 

@@ -1,13 +1,15 @@
-import { useParams, useNavigate } from "react-router-dom"
-import { ArrowLeft } from "lucide-react"
-import { InfoBanner } from "@/components/info-banner"
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { InfoBanner } from "@/components/info-banner";
+import { Seo } from "@/components/seo";
 
 export default function ExerciseDetail() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-surface font-body">
+      <Seo title="Övning" description="Detaljerad övningsbeskrivning." />
       <div className="container-page py-8">
         <button
           onClick={() => navigate(-1)}
@@ -30,5 +32,5 @@ export default function ExerciseDetail() {
         </div>
       </div>
     </div>
-  )
+  );
 }

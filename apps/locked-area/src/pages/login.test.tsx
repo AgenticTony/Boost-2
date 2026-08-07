@@ -5,11 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "@/pages/login";
 import { renderWithProviders } from "@/test/test-utils";
 import { supabaseMock, signedInAs } from "@/test/supabase-mock";
-import {
-  STRONG_INPUT,
-  OTHER_STRONG_INPUT,
-  WEAK_INPUT,
-} from "@/test/fixtures";
+import { STRONG_INPUT, OTHER_STRONG_INPUT, WEAK_INPUT } from "@/test/fixtures";
 
 function renderLogin() {
   return renderWithProviders(
@@ -21,7 +17,6 @@ function renderLogin() {
     { route: "/login" },
   );
 }
-
 
 beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -143,7 +138,10 @@ describe("Login — registration", () => {
     await user.type(screen.getByLabelText("Namn"), "Test Testsson");
     await user.type(screen.getByLabelText("E-post"), "a@b.se");
     await user.type(screen.getByLabelText("Lösenord"), STRONG_INPUT);
-    await user.type(screen.getByLabelText("Bekräfta lösenord"), OTHER_STRONG_INPUT);
+    await user.type(
+      screen.getByLabelText("Bekräfta lösenord"),
+      OTHER_STRONG_INPUT,
+    );
     await user.click(screen.getByRole("button", { name: /Skapa konto/ }));
 
     expect(

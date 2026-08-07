@@ -9,13 +9,14 @@ import {
   MapPin,
   MessageSquare,
   Shield,
-  type LucideIcon
+  type LucideIcon,
 } from "lucide-react";
-import { PageLayout } from "@/components/layout/page-layout";
+import { PageHero } from "@/components/layout/page-hero";
 import { SectionDivider } from "@/components/section-divider";
 import { InfoBanner } from "@/components/info-banner";
 import { GuideSection } from "@/components/guide-section";
 import { FutureFeatures } from "@/components/future-features";
+import { Seo } from "@/components/seo";
 
 // ── Types ─────────────────────────────────────────────────
 interface ResourceCardProps {
@@ -29,9 +30,17 @@ interface ResourceCardProps {
 }
 
 // ── Resource card component ──────────────────────────
-const ResourceCard = ({ icon: Icon, title, description, href, linkText, badge, external }: ResourceCardProps) => {
+const ResourceCard = ({
+  icon: Icon,
+  title,
+  description,
+  href,
+  linkText,
+  badge,
+  external,
+}: ResourceCardProps) => {
   const linkClasses =
-    'inline-flex items-center gap-2 text-brand-red hover:text-brand-red/80 text-sm font-medium transition-colors';
+    "inline-flex items-center gap-2 text-brand-red hover:text-brand-red/80 text-sm font-medium transition-colors";
 
   return (
     <div className="bg-white border border-border rounded-card p-6 hover:border-brand-red/30 transition-all duration-300 shadow-sm flex flex-col">
@@ -45,12 +54,18 @@ const ResourceCard = ({ icon: Icon, title, description, href, linkText, badge, e
           </span>
         )}
       </div>
-      <h3 className="text-text font-display font-semibold text-lg mb-2">{title}</h3>
-      <p className="text-text-muted text-sm mb-4 leading-relaxed flex-1">{description}</p>
+      <h3 className="text-text font-display font-semibold text-lg mb-2">
+        {title}
+      </h3>
+      <p className="text-text-muted text-sm mb-4 leading-relaxed flex-1">
+        {description}
+      </p>
       {href ? (
         <a
           href={href}
-          {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          {...(external
+            ? { target: "_blank", rel: "noopener noreferrer" }
+            : {})}
           className={linkClasses}
         >
           {linkText}
@@ -67,102 +82,113 @@ export const Resources = () => {
   const resources: ResourceCardProps[] = [
     {
       icon: AlertTriangle,
-      title: 'Akut hjälp',
+      title: "Akut hjälp",
       description:
-        'Vid akuta situationer som kräver omedelbar assistans — ring 112. Detta gäller olyckor, allvarlig skada eller om någon är i fara.',
-      href: 'tel:112',
-      linkText: 'Ring 112',
-      badge: 'Akut',
+        "Vid akuta situationer som kräver omedelbar assistans — ring 112. Detta gäller olyckor, allvarlig skada eller om någon är i fara.",
+      href: "tel:112",
+      linkText: "Ring 112",
+      badge: "Akut",
       external: false,
     },
     {
       icon: Phone,
-      title: 'Stödlinjen',
+      title: "Stödlinjen",
       description:
-        'Behöver du någon att prata med? Stödlinjen vänder sig till både deltagare och ledare och erbjuder vägledning, samtal och rådgivning.',
+        "Behöver du någon att prata med? Stödlinjen vänder sig till både deltagare och ledare och erbjuder vägledning, samtal och rådgivning.",
       href: undefined,
-      linkText: 'Nummer publiceras snart',
+      linkText: "Nummer publiceras snart",
     },
     {
       icon: Mail,
-      title: 'Kontakta oss via e-post',
+      title: "Kontakta oss via e-post",
       description:
-        'Skicka ett mejl till Boost-teamet med frågor om programmet, träning eller deltagande. Vi besvarar ditt meddelande så snart vi kan.',
-      href: 'mailto:kontakt@boostbyfcr.se',
-      linkText: 'Skicka e-post',
+        "Skicka ett mejl till Boost-teamet med frågor om programmet, träning eller deltagande. Vi besvarar ditt meddelande så snart vi kan.",
+      href: "mailto:kontakt@boostbyfcr.se",
+      linkText: "Skicka e-post",
       external: false,
     },
   ];
 
   const guideSteps = [
     {
-      title: 'Hitta rätt resurs',
+      title: "Hitta rätt resurs",
       description:
-        'Läs igenom korten ovan för att hitta den typ av stöd du behöver — oavsett om det gäller akut hjälp, en stödsamtal eller allmänna frågor.'
+        "Läs igenom korten ovan för att hitta den typ av stöd du behöver — oavsett om det gäller akut hjälp, en stödsamtal eller allmänna frågor.",
     },
     {
-      title: 'Klicka för att ta kontakt',
+      title: "Klicka för att ta kontakt",
       description:
-        'Varje resurs har en direktlänk. Klicka på "Ring" för att slå numret, eller "Skicka e-post" för att öppna din e-postklient.'
+        'Varje resurs har en direktlänk. Klicka på "Ring" för att slå numret, eller "Skicka e-post" för att öppna din e-postklient.',
     },
     {
-      title: 'Spara för senare',
+      title: "Spara för senare",
       description:
-        'Bokmärk den här sidan i din webbläsare för snabb åtkomst. Du kan också spara enskilda nummer i telefonens kontakter för framtida bruk.'
+        "Bokmärk den här sidan i din webbläsare för snabb åtkomst. Du kan också spara enskilda nummer i telefonens kontakter för framtida bruk.",
     },
     {
-      title: 'Dela med andra',
+      title: "Dela med andra",
       description:
-        'Om du känner någon som behöver stöd, dela gärna dessa resurser. Informationen här är till för alla Boost-deltagare och deras familjer.'
-    }
+        "Om du känner någon som behöver stöd, dela gärna dessa resurser. Informationen här är till för alla Boost-deltagare och deras familjer.",
+    },
   ];
 
   const futureFeatures = [
     {
       icon: BookOpen,
-      title: 'Resursbibliotek',
-      description: 'Nedladdningsbara PDF:er, guider och dokument för träning och personlig utveckling.',
-      status: 'Kommer Q3 2026'
+      title: "Resursbibliotek",
+      description:
+        "Nedladdningsbara PDF:er, guider och dokument för träning och personlig utveckling.",
+      status: "Kommer Q3 2026",
     },
     {
       icon: Heart,
-      title: 'Mental hälsa',
-      description: 'Artiklar, övningar och professionella kontakter med fokus på välmående och mental hälsa.',
-      status: 'Kommer Q4 2026'
+      title: "Mental hälsa",
+      description:
+        "Artiklar, övningar och professionella kontakter med fokus på välmående och mental hälsa.",
+      status: "Kommer Q4 2026",
     },
     {
       icon: Shield,
-      title: 'Säkerhetsriktlinjer',
-      description: 'Omfattande säkerhetsrutiner och beredskapsplaner för alla aktiviteter.',
-      status: 'Kommer Q4 2026'
+      title: "Säkerhetsriktlinjer",
+      description:
+        "Omfattande säkerhetsrutiner och beredskapsplaner för alla aktiviteter.",
+      status: "Kommer Q4 2026",
     },
     {
       icon: MapPin,
-      title: 'Lokala partners',
-      description: 'Karta och förteckning över lokala organisationer, mottagningar och stödcenter.',
-      status: 'Kommer 2027'
+      title: "Lokala partners",
+      description:
+        "Karta och förteckning över lokala organisationer, mottagningar och stödcenter.",
+      status: "Kommer 2027",
     },
     {
       icon: MessageSquare,
-      title: 'Direktmeddelanden',
-      description: 'Skicka säkra meddelanden direkt till vår personal från den här sidan.',
-      status: 'Kommer 2027'
+      title: "Direktmeddelanden",
+      description:
+        "Skicka säkra meddelanden direkt till vår personal från den här sidan.",
+      status: "Kommer 2027",
     },
     {
       icon: Clock,
-      title: 'Boka tid',
-      description: 'Boka samtal eller möten med personal via en integrerad kalender.',
-      status: 'Kommer 2027'
-    }
+      title: "Boka tid",
+      description:
+        "Boka samtal eller möten med personal via en integrerad kalender.",
+      status: "Kommer 2027",
+    },
   ];
 
   return (
-    <PageLayout
-      title="Resurser & Kontakter"
-      subtitle="Här hittar du viktiga kontakter, stödlinjer och resurser för dig som deltar i Boost by FC Rosengård. Oavsett om du behöver någon att prata med eller snabb hjälp — vi finns här för dig."
-      badge="Stöd & Hjälp"
-      heroIcon={Heart}
-    >
+    <div className="min-h-screen bg-surface">
+      <Seo
+        title="Resurser & kontakter"
+        description="Stödlinjer, akut hjälp och kontaktvägar."
+      />
+      <PageHero
+        title="Resurser & Kontakter"
+        subtitle="Här hittar du viktiga kontakter, stödlinjer och resurser för dig som deltar i Boost by FC Rosengård. Oavsett om du behöver någon att prata med eller snabb hjälp — vi finns här för dig."
+        badge="Stöd & Hjälp"
+        icon={Heart}
+      />
       {/* Resources Grid */}
       <section className="container-page py-12">
         <SectionDivider label="Tillgängliga Resurser" />
@@ -195,9 +221,8 @@ export const Resources = () => {
         subtitle="Resurser-sidan kommer växa med fler verktyg och funktioner. Här är vad vi planerar att lägga till framöver."
         features={futureFeatures}
       />
-    </PageLayout>
+    </div>
   );
 };
 
 export default Resources;
-

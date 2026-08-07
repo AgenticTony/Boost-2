@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
+import { Seo } from "@/components/seo";
 
 interface PendingUser {
   id: string;
@@ -113,6 +114,7 @@ export default function AdminApprovals() {
 
   return (
     <div className="min-h-screen bg-surface font-body">
+      <Seo title="Godkänn användare" description="Administrera nya konton." />
       <div className="container-page py-12">
         <h1 className="text-3xl font-display font-bold text-text mb-6">
           Godkänn nya användare

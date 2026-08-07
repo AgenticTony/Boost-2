@@ -7,6 +7,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { RegisterForm } from "@/components/auth/register-form";
 import { Alert } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { Seo } from "@/components/seo";
 
 /** Where "back to the main site" points. */
 const PUBLIC_SITE_URL = "https://boostbyfcr.se";
@@ -69,6 +70,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex font-body">
+      <Seo
+        title="Logga in"
+        description="Logga in för att komma åt metodmaterialet."
+      />
       <AuthHero />
 
       <div className="w-full lg:w-1/2 bg-surface flex items-center justify-center p-6">

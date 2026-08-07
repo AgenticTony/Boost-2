@@ -1,10 +1,14 @@
 import { Link } from "react-router-dom";
+import { Seo } from "@/components/seo";
 
 export default function NotFound() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-surface p-6 font-body">
+      <Seo title="Sidan finns inte" />
       <div className="max-w-md text-center">
-        <h1 className="text-6xl font-display font-extrabold text-brand-navy mb-4">404</h1>
+        <h1 className="text-6xl font-display font-extrabold text-brand-navy mb-4">
+          404
+        </h1>
         <p className="text-lg text-text-muted leading-relaxed mb-8">
           Sidan du letar efter finns inte.
         </p>

@@ -1,8 +1,10 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#072D59" />
 
     <!--
       Keep the whole members area out of search results.
@@ -16,13 +18,77 @@
       Paired with public/robots.txt. Neither is access control - that is
       Supabase auth plus row-level security - but both keep the area out of
       the index if a link ever leaks.
+
+      Unlike public-site, there are no Open Graph or Twitter tags here. Every
+      page behind this shell is private; giving link unfurlers a title, a
+      description and an image to render would be handing out a preview of
+      exactly what the login screen exists to protect.
     -->
     <meta name="robots" content="noindex, nofollow" />
 
-    <title>Boost by FCR - Locked Area</title>
+    <title>Boost by FCR - Metodmaterial</title>
+
+    <!-- Self-hosted Montserrat: preload the two weights above the fold on the
+         login screen (700 for the display heading, 400 for body copy). -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/fonts/Montserrat-Bold.woff2"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/fonts/Montserrat-Regular.woff2"
+    />
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Target is <main id="main-content"> in App.tsx. The .skip-to-content
+         styles have been in index.css all along; only this anchor was missing,
+         so the app shipped with dead CSS and no skip link. -->
+    <a href="#main-content" class="skip-to-content">Hoppa till huvudinnehåll</a>
+
+    <!-- Pre-hydration shell. Inline and dependency-free on purpose: it has to
+         paint before any CSS or JS has loaded, otherwise the first thing a
+         member sees on a cold load is a blank white page. -->
+    <div id="root">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          background: #faf8f5;
+        "
+      >
+        <div style="text-align: center">
+          <div
+            style="
+              width: 48px;
+              height: 48px;
+              border: 3px solid #e5e7eb;
+              border-top-color: #c93320;
+              border-radius: 50%;
+              animation: _bo 0.8s linear infinite;
+              margin: 0 auto 16px;
+            "
+          ></div>
+          <p style="font-family: Montserrat, sans-serif; font-size: 14px; color: #6b7280">
+            Laddar...
+          </p>
+        </div>
+      </div>
+      <style>
+        @keyframes _bo {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      </style>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
